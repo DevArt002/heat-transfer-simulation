@@ -12,9 +12,11 @@ export class SimulationSystem extends System {
   private _massFluid: number = 0; // Mass of fluid filled the tank.
   private _initialFluidTemperature: number = 0; // Initial temperature of fluid
   private _specificHeatCapacityFluid: number = 0; // Joules per gram per degree Celsius, e.g. water
+  private _tankHeatLossCoefficient: number = 0; // Watts per square meter per degree Celsius on surface of storage tank
+  private _tankSurfaceArea: number = 0; // m^2 surface area of storage tank
   private _solarPanelArea: number = 0; // m^2 surface area of solar panel
   private _solarPanelEfficiency: number = 0; // Efficiency of solar panel
-  private _solarPanelHeatLossCoefficient = 0; // Watts per square meter per degree Celsius
+  private _solarPanelHeatLossCoefficient = 0; // Watts per square meter per degree Celsius on surface of solar panel
 
   // Temporary attributes
   private _currentFluidTemperature: number = 0;
@@ -57,6 +59,8 @@ export class SimulationSystem extends System {
       this._massFluid = storageTankEntity.massFluid;
       this._specificHeatCapacityFluid = storageTankEntity.specificHeatCapacityFluid;
       this._initialFluidTemperature = storageTankEntity.initialFluidTemperature;
+      this._tankHeatLossCoefficient = storageTankEntity.heatLoosCoefficient;
+      this._tankSurfaceArea = storageTankEntity.area;
       this._solarPanelArea = solarPanelEntity.area;
       this._solarPanelEfficiency = solarPanelEntity.efficiency;
       this._solarPanelHeatLossCoefficient = solarPanelEntity.heatLoosCoefficient;
@@ -86,6 +90,8 @@ export class SimulationSystem extends System {
     this._massFluid = 0;
     this._specificHeatCapacityFluid = 0;
     this._initialFluidTemperature = 0;
+    this._tankHeatLossCoefficient = 0;
+    this._tankSurfaceArea = 0;
     this._solarPanelArea = 0;
     this._solarPanelEfficiency = 0;
     this._solarPanelHeatLossCoefficient = 0;
@@ -103,6 +109,8 @@ export class SimulationSystem extends System {
       _ambientTemperature,
       _massFluid,
       _specificHeatCapacityFluid,
+      _tankHeatLossCoefficient,
+      _tankSurfaceArea,
       _solarPanelArea,
       _solarPanelEfficiency,
       _solarPanelHeatLossCoefficient,
@@ -123,9 +131,9 @@ export class SimulationSystem extends System {
     const energyIn = _solarPanelArea * solarRadiation * _solarPanelEfficiency * bakedDelta;
 
     // Calculate energy lost due to heat loss
-    let energyOut =
-      _solarPanelHeatLossCoefficient *
-      _solarPanelArea *
+    const energyOut =
+      (_solarPanelHeatLossCoefficient * _solarPanelArea +
+        _tankHeatLossCoefficient * _tankSurfaceArea) *
       (this._currentFluidTemperature - _ambientTemperature) *
       bakedDelta;
 

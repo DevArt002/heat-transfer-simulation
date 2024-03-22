@@ -4,6 +4,7 @@ import {
   DEFAULT_FLUID_DENSITY,
   DEFAULT_INITIAL_FLUID_TEMPERATURE,
   DEFAULT_SPECIFIC_HEAT_CAPACITY_FLUID,
+  DEFAULT_TANK_HEAT_LOSS_COEFFICIENT,
   DEFAULT_TANK_HEIGHT,
   DEFAULT_TANK_RADIUS,
 } from 'src/constants';
@@ -23,6 +24,7 @@ export class StorageTankEntity extends Entity {
   private _initialFluidTemperature: number = DEFAULT_INITIAL_FLUID_TEMPERATURE;
   private _fluidDensity: number = DEFAULT_FLUID_DENSITY;
   private _specificHeatCapacityFluid: number = DEFAULT_SPECIFIC_HEAT_CAPACITY_FLUID;
+  private _heatLossCoefficient: number = DEFAULT_TANK_HEAT_LOSS_COEFFICIENT;
 
   constructor(simulator: Simulator) {
     super(simulator);
@@ -52,6 +54,13 @@ export class StorageTankEntity extends Entity {
     this.setGeometry();
   }
 
+  // Getter of surface area
+  get area(): number {
+    const { _radius, _height } = this;
+
+    return 2 * Math.PI * _radius * (_radius + _height);
+  }
+
   // Getter of volume
   get volume(): number {
     const { _radius, _height } = this;
@@ -79,6 +88,11 @@ export class StorageTankEntity extends Entity {
   // Getter of specific heat capacity fluid
   get specificHeatCapacityFluid(): number {
     return this._specificHeatCapacityFluid;
+  }
+
+  // Getter of heat loss coefficient
+  get heatLoosCoefficient(): number {
+    return this._heatLossCoefficient;
   }
 
   // Getter of point of the pipe inlet
