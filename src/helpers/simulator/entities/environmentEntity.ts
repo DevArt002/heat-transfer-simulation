@@ -52,6 +52,11 @@ export class EnvironmentEntity extends Entity {
     return this._ambientTemp;
   }
 
+  // Setter of ambient temperature
+  set ambientTemp(value: number) {
+    this._ambientTemp = value;
+  }
+
   /**
    * Initialize system
    */

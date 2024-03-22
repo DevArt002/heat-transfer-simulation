@@ -68,6 +68,11 @@ export class SolarPanelEntity extends Entity {
     return this._efficiency;
   }
 
+  // Setter of efficiency
+  set efficiency(value: number) {
+    this._efficiency = value;
+  }
+
   // Getter of efficiency on surface
   get efficiencySurface(): number {
     const { _efficiency, area } = this;
@@ -78,6 +83,11 @@ export class SolarPanelEntity extends Entity {
   // Getter of heat loss coefficient
   get heatLossCoefficient(): number {
     return this._heatLossCoefficient;
+  }
+
+  // Setter of heat loss coefficient
+  set heatLossCoefficient(value: number) {
+    this._heatLossCoefficient = value;
   }
 
   // Getter of heat loss on surface

@@ -23,6 +23,17 @@ export class PipeEntity extends Entity {
     this.init();
   }
 
+  // Getter of radius
+  get radius(): number {
+    return this._radius;
+  }
+
+  // Setter of radius
+  set radius(value: number) {
+    this._radius = value;
+    this.setGeometry();
+  }
+
   // Getter of pipe length
   get length(): number {
     return this._length;
@@ -38,6 +49,11 @@ export class PipeEntity extends Entity {
   // Getter of heat loss coefficient
   get heatLossCoefficient(): number {
     return this._heatLossCoefficient;
+  }
+
+  // Setter of heat loss coefficient
+  set heatLossCoefficient(value: number) {
+    this._heatLossCoefficient = value;
   }
 
   // Getter of heat loss on surface

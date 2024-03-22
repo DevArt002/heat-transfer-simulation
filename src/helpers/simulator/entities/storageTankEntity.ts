@@ -73,7 +73,12 @@ export class StorageTankEntity extends Entity {
     return this._fluidDensity;
   }
 
-  // Getter of mass of fluid in gram
+  // Setter of fluid density
+  set fluidDensity(value: number) {
+    this._fluidDensity = value;
+  }
+
+  // Getter of mass of fluid in kg
   get fluidMass(): number {
     const { volume, _fluidDensity } = this;
 
@@ -96,9 +101,19 @@ export class StorageTankEntity extends Entity {
     return this._heatCapacityFluid;
   }
 
+  // Setter of heat capacity
+  set heatCapacityFluid(value: number) {
+    this._heatCapacityFluid = value;
+  }
+
   // Getter of heat loss coefficient
   get heatLossCoefficient(): number {
     return this._heatLossCoefficient;
+  }
+
+  // Setter of heat loss coefficient
+  set heatLossCoefficient(value: number) {
+    this._heatLossCoefficient = value;
   }
 
   // Getter of heat loss on surface
