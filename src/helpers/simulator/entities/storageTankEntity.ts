@@ -7,13 +7,9 @@ import { Simulator } from 'src/helpers';
 
 export class StorageTankEntity extends Entity {
   private _mesh: THREE.Mesh = new THREE.Mesh();
-  private _geometry: THREE.BufferGeometry = new THREE.CylinderGeometry(
-    DEFAULT_TANK_RADIUS,
-    DEFAULT_TANK_RADIUS,
-    DEFAULT_TANK_HEIGHT,
-    32,
-  );
-  private _material: THREE.Material = new THREE.MeshStandardMaterial({ color: 0xffffff });
+  private _material: THREE.Material = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+  });
   private _height: number = DEFAULT_TANK_HEIGHT;
   private _radius: number = DEFAULT_TANK_RADIUS;
 
@@ -31,7 +27,7 @@ export class StorageTankEntity extends Entity {
   // Setter of height
   set height(value: number) {
     this._height = value;
-    this.updateGeometry();
+    this.setGeometry();
   }
 
   // Getter of radius
@@ -42,40 +38,62 @@ export class StorageTankEntity extends Entity {
   // Setter of radius
   set radius(value: number) {
     this._radius = value;
-    this.updateGeometry();
+    this.setGeometry();
+  }
+
+  // Getter of point of the pipe inlet
+  get inPoint(): THREE.Vector3 {
+    const { _height, position } = this;
+
+    const point = position.clone();
+    point.y += _height - 0.1; // 0.1: padding
+    return point;
+  }
+
+  // Getter of point of the pipe outlet
+  get outPoint(): THREE.Vector3 {
+    const point = this.position.clone();
+    point.y += 0.1; // 0.1: padding
+
+    return point;
   }
 
   /**
    * Initialize system
    */
   init(): void {
-    const { _mesh, _geometry, _material, _height } = this;
+    const { _mesh, _material } = this;
 
-    _mesh.geometry = _geometry;
     _mesh.material = _material;
-    _mesh.position.y = _height / 2;
 
     this.add(_mesh);
+    _mesh.matrixAutoUpdate = false;
+
+    // Set geometry
+    this.setGeometry();
   }
 
   /**
-   * Update geometry
+   * Set geometry
    */
-  updateGeometry(): void {
-    const { _mesh, _radius, _height } = this;
+  setGeometry(): void {
+    const { _simulator, _mesh, _radius, _height } = this;
 
     // TODO Instead of discarding outdated geometry and adding new geometry, it'd be advantageous to solely update geometry attributes.
-    this._geometry.dispose();
-    this._geometry = new THREE.CylinderGeometry(_radius, _radius, _height, 32);
-    _mesh.geometry = this._geometry;
+    _mesh.geometry.dispose();
+    const geometry = new THREE.CylinderGeometry(_radius, _radius, _height, 32);
+    _mesh.geometry = geometry;
     _mesh.position.y = _height / 2;
+    _mesh.updateMatrix();
+
+    // Update pipe
+    _simulator.pipeEntity?.setGeometry();
   }
 
   /**
    * Update
    */
   update(): void {
-    // TODO Material update
     return;
   }
 }

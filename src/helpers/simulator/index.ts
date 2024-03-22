@@ -1,6 +1,12 @@
 import * as THREE from 'three';
 
-import { Entity, EnvironmentEntity, SolarPanelEntity, StorageTankEntity } from './entities';
+import {
+  Entity,
+  EnvironmentEntity,
+  PipeEntity,
+  SolarPanelEntity,
+  StorageTankEntity,
+} from './entities';
 import { GUISystem, StatsSystem } from './systems';
 
 import { IS_DEV } from 'src/constants';
@@ -30,6 +36,7 @@ export class Simulator extends THREE.EventDispatcher<any> {
   private _environmentEntityId: TEntityID | null = null; // Environment entity id
   private _storageTankEntityId: TEntityID | null = null; // Storage tank entity id
   private _solarPanelEntityId: TEntityID | null = null; // Solar panel entity id
+  private _pipeEntityId: TEntityID | null = null; // Pipe line entity id
 
   // Other
   private _clock: THREE.Clock = new THREE.Clock(); // Clock
@@ -174,6 +181,15 @@ export class Simulator extends THREE.EventDispatcher<any> {
     return _entities[_solarPanelEntityId] as SolarPanelEntity;
   }
 
+  // Getter of pipe entity
+  get pipeEntity(): PipeEntity | null {
+    const { _pipeEntityId, _entities } = this;
+
+    if (_pipeEntityId === null) return null;
+
+    return _entities[_pipeEntityId] as PipeEntity;
+  }
+
   /**
    * Initialize
    */
@@ -206,23 +222,26 @@ export class Simulator extends THREE.EventDispatcher<any> {
     const { _entities, _scene } = this;
 
     const environmentEntity = new EnvironmentEntity(this);
-    const storageTankEntity = new StorageTankEntity(this);
-    const solarPanelEntity = new SolarPanelEntity(this);
-
-    storageTankEntity.position.set(2, 0, 0);
-    solarPanelEntity.position.set(-2, 0, 0);
-
     this._environmentEntityId = environmentEntity.id;
-    this._storageTankEntityId = storageTankEntity.id;
-    this._solarPanelEntityId = solarPanelEntity.id;
-
     _entities[environmentEntity.id] = environmentEntity;
-    _entities[storageTankEntity.id] = storageTankEntity;
-    _entities[solarPanelEntity.id] = solarPanelEntity;
-
     _scene.add(environmentEntity);
+
+    const storageTankEntity = new StorageTankEntity(this);
+    storageTankEntity.position.set(2, 0, 0);
+    this._storageTankEntityId = storageTankEntity.id;
+    _entities[storageTankEntity.id] = storageTankEntity;
     _scene.add(storageTankEntity);
+
+    const solarPanelEntity = new SolarPanelEntity(this);
+    solarPanelEntity.position.set(-2, 0, 0);
+    this._solarPanelEntityId = solarPanelEntity.id;
+    _entities[solarPanelEntity.id] = solarPanelEntity;
     _scene.add(solarPanelEntity);
+
+    const pipeEntity = new PipeEntity(this);
+    this._pipeEntityId = pipeEntity.id;
+    _entities[pipeEntity.id] = pipeEntity;
+    _scene.add(pipeEntity);
   }
 
   /**

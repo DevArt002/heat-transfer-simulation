@@ -7,11 +7,6 @@ import { Simulator } from 'src/helpers';
 
 export class SolarPanelEntity extends Entity {
   private _mesh: THREE.Mesh = new THREE.Mesh();
-  private _geometry: THREE.BufferGeometry = new THREE.BoxGeometry(
-    DEFAULT_SOLAR_PANEL_WIDTH,
-    0.2, // Default depth of solar panel
-    DEFAULT_SOLAR_PANEL_HEIGHT,
-  );
   private _panMaterial: THREE.Material = new THREE.MeshStandardMaterial({
     color: 0x000000,
     roughness: 0,
@@ -40,7 +35,7 @@ export class SolarPanelEntity extends Entity {
   // Setter of width
   set width(value: number) {
     this._width = value;
-    this.updateGeometry();
+    this.setGeometry();
   }
 
   // Getter of height
@@ -51,16 +46,39 @@ export class SolarPanelEntity extends Entity {
   // Setter of height
   set height(value: number) {
     this._height = value;
-    this.updateGeometry();
+    this.setGeometry();
+  }
+
+  // Getter of point of the pipe inlet
+  get inPoint(): THREE.Vector3 {
+    const { _width, _height, position } = this;
+
+    const point = position.clone();
+    point.x += _width / 2 - 0.1; // 0.1: padding
+    point.y += 0.1;
+    point.z += _height / 2;
+
+    return point;
+  }
+
+  // Getter of point of the pipe outlet
+  get outPoint(): THREE.Vector3 {
+    const { _width, _height, position } = this;
+
+    const point = position.clone();
+    point.x += _width / 2 - 0.1; // 0.1: padding
+    point.y += 0.1;
+    point.z -= _height / 2;
+
+    return point;
   }
 
   /**
    * Initialize system
    */
   init(): void {
-    const { _mesh, _geometry, _panMaterial, _otherMaterial } = this;
+    const { _mesh, _panMaterial, _otherMaterial } = this;
 
-    _mesh.geometry = _geometry;
     _mesh.material = [
       _otherMaterial,
       _otherMaterial,
@@ -69,29 +87,35 @@ export class SolarPanelEntity extends Entity {
       _otherMaterial,
       _otherMaterial,
     ];
-    _mesh.position.y = 0.1;
+    _mesh.matrixAutoUpdate = false;
 
     this.add(_mesh);
+
+    // Set geometry
+    this.setGeometry();
   }
 
   /**
-   * Update geometry
+   * Set geometry
    */
-  updateGeometry(): void {
-    const { _mesh, _width, _height } = this;
+  setGeometry(): void {
+    const { _simulator, _mesh, _width, _height } = this;
 
     // TODO Instead of discarding outdated geometry and adding new geometry, it'd be advantageous to solely update geometry attributes.
-    this._geometry.dispose();
-    this._geometry = new THREE.BoxGeometry(_width, 0.2, _height);
-    _mesh.geometry = this._geometry;
+    _mesh.geometry.dispose();
+    const geometry = new THREE.BoxGeometry(_width, 0.2, _height);
+    _mesh.geometry = geometry;
     _mesh.position.y = 0.1;
+    _mesh.updateMatrix();
+
+    // Update pipe
+    _simulator.pipeEntity?.setGeometry();
   }
 
   /**
    * Update
    */
   update(): void {
-    // TODO Material update
     return;
   }
 }

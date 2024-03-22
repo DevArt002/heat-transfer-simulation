@@ -13,6 +13,7 @@ export const DEFAULT_TANK_HEIGHT = 1;
 export const DEFAULT_TANK_RADIUS = 0.5;
 export const DEFAULT_SOLAR_PANEL_WIDTH = 1.5;
 export const DEFAULT_SOLAR_PANEL_HEIGHT = 2;
+export const DEFAULT_PIPE_RADIUS = 0.05;
 
 // Default gui parameters
 export const DEFAULT_GUI_PARAMETERS: IGUIParams = {

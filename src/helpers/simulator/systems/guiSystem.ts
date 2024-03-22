@@ -37,7 +37,7 @@ export class GUISystem extends System {
     // Storage tank parameters
     const storageTankFolder = this._gui.addFolder(EGUIFolderNames.STORAGE_TANK);
     storageTankFolder
-      .add(_guiParams[EGUIFolderNames.STORAGE_TANK], 'height', 0.1, 10)
+      .add(_guiParams[EGUIFolderNames.STORAGE_TANK], 'height', 1, 4)
       .onChange((value: number) => {
         const { storageTankEntity } = this._simulator;
 
@@ -46,7 +46,7 @@ export class GUISystem extends System {
         storageTankEntity.height = value;
       });
     storageTankFolder
-      .add(_guiParams[EGUIFolderNames.STORAGE_TANK], 'radius', 0.1, 10)
+      .add(_guiParams[EGUIFolderNames.STORAGE_TANK], 'radius', 0.5, 2)
       .onChange((value: number) => {
         const { storageTankEntity } = this._simulator;
 
@@ -58,7 +58,7 @@ export class GUISystem extends System {
     // Solar panel parameters
     const solarPanelFolder = this._gui.addFolder(EGUIFolderNames.SOLAR_PANEL);
     solarPanelFolder
-      .add(_guiParams[EGUIFolderNames.SOLAR_PANEL], 'width', 0.1, 10)
+      .add(_guiParams[EGUIFolderNames.SOLAR_PANEL], 'width', 1, 3)
       .onChange((value: number) => {
         const { solarPanelEntity } = this._simulator;
 
@@ -67,7 +67,7 @@ export class GUISystem extends System {
         solarPanelEntity.width = value;
       });
     solarPanelFolder
-      .add(_guiParams[EGUIFolderNames.SOLAR_PANEL], 'height', 0.1, 10)
+      .add(_guiParams[EGUIFolderNames.SOLAR_PANEL], 'height', 1, 3)
       .onChange((value: number) => {
         const { solarPanelEntity } = this._simulator;
 
