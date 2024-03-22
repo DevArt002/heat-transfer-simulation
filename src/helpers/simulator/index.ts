@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 
+import { ESimulatorEvents, TEntityID } from 'src/types';
 import {
   Entity,
   EnvironmentEntity,
@@ -12,7 +13,6 @@ import { GUISystem, SimulationSystem, StatsSystem } from './systems';
 
 import { IS_DEV } from 'src/constants';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { TEntityID } from 'src/types';
 import { loadEnvMap } from 'src/utils';
 
 export class Simulator extends EventTarget {

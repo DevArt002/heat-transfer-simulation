@@ -1,13 +1,8 @@
 export type TEntityID = number;
 
-export type TXY = [number, number];
-
-export type TXYZ = [number, number, number];
-
 export enum ESimulatorEvents {
-  START = 'Start',
-  STOP = 'STOP',
   PUMP_RUNNING = 'Pump Running',
+  DATA_UPDATED = 'Date Updated',
 }
 
 export enum EGUIFolderNames {
@@ -15,6 +10,11 @@ export enum EGUIFolderNames {
   SOLAR_PANEL = 'Solar Panel',
   PIPE = 'Pipe',
   ENVIRONMENT = 'Environment',
+}
+
+export interface ISimulatorDataUpdatedPayload {
+  elapsed: number;
+  temperature: number;
 }
 
 export interface IGUIParams {

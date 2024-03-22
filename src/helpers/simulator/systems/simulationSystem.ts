@@ -1,6 +1,6 @@
+import { ESimulatorEvents, ISimulatorDataUpdatedPayload } from 'src/types';
 import { calculateSolarRadiation, formatSeconds } from 'src/utils';
 
-import { ESimulatorEvents } from 'src/types';
 import { Simulator } from 'src/helpers';
 import { System } from './system';
 
@@ -61,7 +61,7 @@ export class SimulationSystem extends System {
       this.dispatchEvent(new CustomEvent(ESimulatorEvents.PUMP_RUNNING, { detail: false }));
 
       // Enable gui
-      guiSystem.enable(false);
+      guiSystem.enable(true);
 
       this._totalEnergyProduced = 0;
       this._totalEnergyLost = 0;
@@ -122,24 +122,34 @@ export class SimulationSystem extends System {
    */
   _updateTemp(delta: number, elapsed: number): void {
     const {
-      _simulator: { storageTankEntity },
+      _simulator: { storageTankEntity, pumpEntity },
     } = this;
 
-    if (storageTankEntity === null) return;
+    if (storageTankEntity === null || pumpEntity === null) return;
 
     const { heatCapacityFluid, fluidMass } = storageTankEntity;
 
     const energyIn = this._calculateEnergyIn(delta, elapsed);
     const energyOut = this._calculateEnergyOut(delta);
 
-    // Update total energies
-    this._totalEnergyProduced += energyIn;
-    this._totalEnergyLost += energyOut;
+    // Perform temperate update only when pump is running
+    if (pumpEntity.isRunning) {
+      // Update total energies
+      this._totalEnergyProduced += energyIn;
+      this._totalEnergyLost += energyOut;
 
-    // Calculate change in temperature
-    const deltaTemp = (energyIn - energyOut) / (fluidMass * heatCapacityFluid);
+      // Calculate change in temperature
+      const deltaTemp = (energyIn - energyOut) / (fluidMass * heatCapacityFluid);
 
-    storageTankEntity.fluidTemp += deltaTemp;
+      storageTankEntity.fluidTemp += deltaTemp;
+    }
+
+    // Dispatch event
+    this.dispatchEvent(
+      new CustomEvent<ISimulatorDataUpdatedPayload>(ESimulatorEvents.DATA_UPDATED, {
+        detail: { elapsed, temperature: storageTankEntity.fluidTemp },
+      }),
+    );
 
     // // Log temperature and energies
     // console.log(
