@@ -14,6 +14,14 @@ export const DEFAULT_TANK_RADIUS = 0.5;
 export const DEFAULT_SOLAR_PANEL_WIDTH = 1.5;
 export const DEFAULT_SOLAR_PANEL_HEIGHT = 2;
 export const DEFAULT_PIPE_RADIUS = 0.05;
+export const DEFAULT_LATITUDE = 40.7128; // Latitude of the location (e.g., New York City)
+export const DEFAULT_SPEED = 2000 * 1000; // 2000s = 1ms
+export const DEFAULT_AMBIENT_TEMPERATURE = 20; // Celsius
+export const DEFAULT_INITIAL_FLUID_TEMPERATURE = 25; // Celsius
+export const DEFAULT_SOLAR_PANEL_EFFICIENCY = 0.8; // Dimensionless
+export const DEFAULT_SOLAR_PANEL_HEAT_LOSS_COEFFICIENT = 0.1; // Watts per square meter per degree Celsius
+export const DEFAULT_FLUID_DENSITY = 1000 * 1000; // Grams per cubic meter, g/m^3 e.g. Water's density
+export const DEFAULT_SPECIFIC_HEAT_CAPACITY_FLUID = 4.18; // Joules per gram per degree Celsius, e.g. water
 
 // Default gui parameters
 export const DEFAULT_GUI_PARAMETERS: IGUIParams = {

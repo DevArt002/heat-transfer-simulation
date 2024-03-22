@@ -1,6 +1,12 @@
 import * as THREE from 'three';
 
-import { DEFAULT_TANK_HEIGHT, DEFAULT_TANK_RADIUS } from 'src/constants';
+import {
+  DEFAULT_FLUID_DENSITY,
+  DEFAULT_INITIAL_FLUID_TEMPERATURE,
+  DEFAULT_SPECIFIC_HEAT_CAPACITY_FLUID,
+  DEFAULT_TANK_HEIGHT,
+  DEFAULT_TANK_RADIUS,
+} from 'src/constants';
 
 import { Entity } from './entity';
 import { Simulator } from 'src/helpers';
@@ -14,6 +20,9 @@ export class StorageTankEntity extends Entity {
   });
   private _height: number = DEFAULT_TANK_HEIGHT;
   private _radius: number = DEFAULT_TANK_RADIUS;
+  private _initialFluidTemperature: number = DEFAULT_INITIAL_FLUID_TEMPERATURE;
+  private _fluidDensity: number = DEFAULT_FLUID_DENSITY;
+  private _specificHeatCapacityFluid: number = DEFAULT_SPECIFIC_HEAT_CAPACITY_FLUID;
 
   constructor(simulator: Simulator) {
     super(simulator);
@@ -41,6 +50,35 @@ export class StorageTankEntity extends Entity {
   set radius(value: number) {
     this._radius = value;
     this.setGeometry();
+  }
+
+  // Getter of volume
+  get volume(): number {
+    const { _radius, _height } = this;
+
+    return Math.PI * _radius * _radius * _height;
+  }
+
+  // Getter of fluid density
+  get fluidDensity(): number {
+    return this._fluidDensity;
+  }
+
+  // Getter of mass of fluid
+  get massFluid(): number {
+    const { volume, _fluidDensity } = this;
+
+    return volume * _fluidDensity;
+  }
+
+  // Getter of initial fluid temperature
+  get initialFluidTemperature(): number {
+    return this._initialFluidTemperature;
+  }
+
+  // Getter of specific heat capacity fluid
+  get specificHeatCapacityFluid(): number {
+    return this._specificHeatCapacityFluid;
   }
 
   // Getter of point of the pipe inlet

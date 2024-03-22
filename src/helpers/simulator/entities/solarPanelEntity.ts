@@ -1,6 +1,11 @@
 import * as THREE from 'three';
 
-import { DEFAULT_SOLAR_PANEL_HEIGHT, DEFAULT_SOLAR_PANEL_WIDTH } from 'src/constants';
+import {
+  DEFAULT_SOLAR_PANEL_EFFICIENCY,
+  DEFAULT_SOLAR_PANEL_HEAT_LOSS_COEFFICIENT,
+  DEFAULT_SOLAR_PANEL_HEIGHT,
+  DEFAULT_SOLAR_PANEL_WIDTH,
+} from 'src/constants';
 
 import { Entity } from './entity';
 import { Simulator } from 'src/helpers';
@@ -20,6 +25,8 @@ export class SolarPanelEntity extends Entity {
   }); // Material for other sides
   private _width: number = DEFAULT_SOLAR_PANEL_WIDTH;
   private _height: number = DEFAULT_SOLAR_PANEL_HEIGHT;
+  private _efficiency: number = DEFAULT_SOLAR_PANEL_EFFICIENCY;
+  private _heatLossCoefficient: number = DEFAULT_SOLAR_PANEL_HEAT_LOSS_COEFFICIENT;
 
   constructor(simulator: Simulator) {
     super(simulator);
@@ -47,6 +54,23 @@ export class SolarPanelEntity extends Entity {
   set height(value: number) {
     this._height = value;
     this.setGeometry();
+  }
+
+  // Getter of area
+  get area(): number {
+    const { _width, _height } = this;
+
+    return _width * _height;
+  }
+
+  // Getter of efficiency
+  get efficiency(): number {
+    return this._efficiency;
+  }
+
+  // Getter of heat loss coefficient
+  get heatLoosCoefficient(): number {
+    return this._heatLossCoefficient;
   }
 
   // Getter of point of the pipe inlet

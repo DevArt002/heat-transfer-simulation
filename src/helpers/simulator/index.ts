@@ -8,7 +8,7 @@ import {
   SolarPanelEntity,
   StorageTankEntity,
 } from './entities';
-import { GUISystem, StatsSystem } from './systems';
+import { GUISystem, SimulationSystem, StatsSystem } from './systems';
 
 import { IS_DEV } from 'src/constants';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -29,6 +29,7 @@ export class Simulator extends THREE.EventDispatcher<any> {
   // Systems&Helpers
   private _statsSystem: StatsSystem | null = null; // Stats
   private _guiSystem: GUISystem | null = null; // GUI
+  private _simulationSystem: SimulationSystem | null = null;
   private _gridHelper: THREE.GridHelper;
   private _orbitControls: OrbitControls;
 
@@ -136,6 +137,11 @@ export class Simulator extends THREE.EventDispatcher<any> {
     return this._camera;
   }
 
+  // Getter of clock
+  get clock(): THREE.Clock {
+    return this._clock;
+  }
+
   // Getter of orbit controls
   get orbitControls(): OrbitControls {
     return this._orbitControls;
@@ -154,6 +160,11 @@ export class Simulator extends THREE.EventDispatcher<any> {
   // Getter of gui system
   get guiSystem(): GUISystem | null {
     return this._guiSystem;
+  }
+
+  // Getter of simulation system
+  get simulationSystem(): SimulationSystem | null {
+    return this._simulationSystem;
   }
 
   // Getter of environment entity
@@ -204,23 +215,23 @@ export class Simulator extends THREE.EventDispatcher<any> {
   /**
    * Initialize
    */
-  init() {
-    this.onWindowResize = this.onWindowResize.bind(this);
+  init(): void {
+    this._onWindowResize = this._onWindowResize.bind(this);
 
     // TODO Perhaps, add a loading screen while loading assets
-    this.loadAssets();
-    this.initEntities();
-    this.initSystems();
-    this.initEventListeners();
+    this._loadAssets();
+    this._initEntities();
+    this._initSystems();
+    this._initEventListeners();
 
     this._clock.start();
-    this._renderer.setAnimationLoop(this.update);
+    this._renderer.setAnimationLoop(this._update);
   }
 
   /**
    * Load assets
    */
-  async loadAssets() {
+  async _loadAssets(): Promise<void> {
     const envMap = await loadEnvMap('img/env.hdr', this._renderer);
     this._scene.environment = envMap;
     this._envMap = envMap;
@@ -229,7 +240,7 @@ export class Simulator extends THREE.EventDispatcher<any> {
   /**
    * Initialize entities
    */
-  initEntities() {
+  _initEntities(): void {
     const { _entities, _scene } = this;
 
     // Env entity
@@ -269,7 +280,9 @@ export class Simulator extends THREE.EventDispatcher<any> {
   /**
    * Initialize systems
    */
-  initSystems() {
+  _initSystems(): void {
+    this._simulationSystem = new SimulationSystem(this);
+
     if (IS_DEV) {
       this._statsSystem = new StatsSystem(this);
       this._guiSystem = new GUISystem(this);
@@ -279,21 +292,21 @@ export class Simulator extends THREE.EventDispatcher<any> {
   /**
    * Initialize event listeners
    */
-  initEventListeners() {
-    window.addEventListener('resize', this.onWindowResize, false);
+  _initEventListeners(): void {
+    window.addEventListener('resize', this._onWindowResize, false);
   }
 
   /**
    * Dispose event listeners
    */
-  disposeEventListeners() {
-    window.removeEventListener('resize', this.onWindowResize, false);
+  _disposeEventListeners(): void {
+    window.removeEventListener('resize', this._onWindowResize, false);
   }
 
   /**
    * Window resize listener
    */
-  onWindowResize() {
+  _onWindowResize(): void {
     this._width = this._container.offsetWidth;
     this._height = this._container.offsetHeight;
     this._aspect = this._width / this._height;
@@ -304,10 +317,32 @@ export class Simulator extends THREE.EventDispatcher<any> {
   }
 
   /**
+   * Start simulation
+   */
+  startSimulation(): void {
+    this._simulationSystem?.start();
+  }
+
+  /**
+   * Stop simulation
+   */
+  stopSimulation(): void {
+    this._simulationSystem?.stop();
+  }
+
+  /**
    * Tick
    */
-  update = () => {
-    const { _clock, _statsSystem, _guiSystem, _orbitControls, _entities, _isDisposed } = this;
+  _update = (): void => {
+    const {
+      _clock,
+      _statsSystem,
+      _guiSystem,
+      _simulationSystem,
+      _orbitControls,
+      _entities,
+      _isDisposed,
+    } = this;
 
     if (_isDisposed) {
       this._renderer.setAnimationLoop(null);
@@ -318,11 +353,12 @@ export class Simulator extends THREE.EventDispatcher<any> {
     const elapsed = _clock.getElapsedTime();
 
     // Render scene
-    this.render();
+    this._render();
 
     // Update systems&helpers
     _statsSystem?.update();
     _guiSystem?.update();
+    _simulationSystem?.update(delta, elapsed);
     _orbitControls.update();
 
     // Update entities
@@ -334,20 +370,28 @@ export class Simulator extends THREE.EventDispatcher<any> {
   /**
    * Render
    */
-  render() {
+  _render(): void {
     this._renderer.render(this._scene, this._camera);
   }
 
   /**
    * Dispose
    */
-  dispose() {
-    const { _entities, _camera, _statsSystem, _guiSystem, _renderer, _orbitControls } = this;
+  dispose(): void {
+    const {
+      _entities,
+      _camera,
+      _statsSystem,
+      _guiSystem,
+      _simulationSystem,
+      _renderer,
+      _orbitControls,
+    } = this;
 
     this._isDisposed = true;
 
     // Remove event listeners
-    this.disposeEventListeners();
+    this._disposeEventListeners();
     // Dispose all entities
     for (const key in _entities) {
       _entities[key].dispose();
@@ -358,6 +402,8 @@ export class Simulator extends THREE.EventDispatcher<any> {
     _statsSystem?.dispose();
     // Dipose gui system
     _guiSystem?.dispose();
+    // Dipose simulation system
+    _simulationSystem?.dispose();
     // Dispose orbit controls
     _orbitControls.dispose();
     // Remove the canvas

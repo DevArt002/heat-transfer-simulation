@@ -1,5 +1,9 @@
 export type TEntityID = number;
 
+export type TXY = [number, number];
+
+export type TXYZ = [number, number, number];
+
 export enum EGUIFolderNames {
   STORAGE_TANK = 'Storage Tank',
   SOLAR_PANEL = 'Solar Panel',
