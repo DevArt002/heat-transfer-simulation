@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 
-import { ESimulatorEvents, TEntityID } from 'src/types';
 import {
   Entity,
   EnvironmentEntity,
@@ -13,6 +12,7 @@ import { GUISystem, SimulationSystem, StatsSystem } from './systems';
 
 import { IS_DEV } from 'src/constants';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { TEntityID } from 'src/types';
 import { loadEnvMap } from 'src/utils';
 
 export class Simulator extends EventTarget {
@@ -69,7 +69,7 @@ export class Simulator extends EventTarget {
 
     // Initialize camera
     const camera = new THREE.PerspectiveCamera(45, this._aspect, 0.1, 1000);
-    camera.position.set(10, 10, 10);
+    camera.position.set(10, 5, 10);
     camera.lookAt(new THREE.Vector3());
     scene.add(camera);
 
@@ -240,7 +240,7 @@ export class Simulator extends EventTarget {
   /**
    * Initialize entities
    */
-  _initEntities(): void {
+  private _initEntities(): void {
     const { _entities, _scene } = this;
 
     // Env entity
@@ -280,7 +280,7 @@ export class Simulator extends EventTarget {
   /**
    * Initialize systems
    */
-  _initSystems(): void {
+  private _initSystems(): void {
     this._simulationSystem = new SimulationSystem(this);
 
     if (IS_DEV) {
@@ -292,21 +292,21 @@ export class Simulator extends EventTarget {
   /**
    * Initialize event listeners
    */
-  _initEventListeners(): void {
+  private _initEventListeners(): void {
     window.addEventListener('resize', this._onWindowResize, false);
   }
 
   /**
    * Dispose event listeners
    */
-  _disposeEventListeners(): void {
+  private _disposeEventListeners(): void {
     window.removeEventListener('resize', this._onWindowResize, false);
   }
 
   /**
    * Window resize listener
    */
-  _onWindowResize(): void {
+  private _onWindowResize(): void {
     this._width = this._container.offsetWidth;
     this._height = this._container.offsetHeight;
     this._aspect = this._width / this._height;
@@ -333,7 +333,7 @@ export class Simulator extends EventTarget {
   /**
    * Tick
    */
-  _update = (): void => {
+  private _update = (): void => {
     const {
       _clock,
       _statsSystem,
@@ -370,7 +370,7 @@ export class Simulator extends EventTarget {
   /**
    * Render
    */
-  _render(): void {
+  private _render(): void {
     this._renderer.render(this._scene, this._camera);
   }
 
