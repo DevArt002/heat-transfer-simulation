@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import { Entity, EnvironmentEntity, StorageTankEntity } from './entities';
+import { Entity, EnvironmentEntity, SolarPanelEntity, StorageTankEntity } from './entities';
 import { GUISystem, StatsSystem } from './systems';
 
 import { IS_DEV } from 'src/constants';
@@ -28,7 +28,8 @@ export class Simulator extends THREE.EventDispatcher<any> {
   // Entities
   private _entities: Record<TEntityID, Entity> = {}; // Entities
   private _environmentEntityId: TEntityID | null = null; // Environment entity id
-  private _storageEntityId: TEntityID | null = null; // Storage tank entity id
+  private _storageTankEntityId: TEntityID | null = null; // Storage tank entity id
+  private _solarPanelEntityId: TEntityID | null = null; // Solar panel entity id
 
   // Other
   private _clock: THREE.Clock = new THREE.Clock(); // Clock
@@ -146,15 +147,6 @@ export class Simulator extends THREE.EventDispatcher<any> {
     return this._guiSystem;
   }
 
-  // Getter of storage tank entity
-  get storageTankEntity(): StorageTankEntity | null {
-    const { _storageEntityId, _entities } = this;
-
-    if (_storageEntityId === null) return null;
-
-    return _entities[_storageEntityId] as StorageTankEntity;
-  }
-
   // Getter of environment entity
   get environmentEntity(): EnvironmentEntity | null {
     const { _environmentEntityId, _entities } = this;
@@ -162,6 +154,24 @@ export class Simulator extends THREE.EventDispatcher<any> {
     if (_environmentEntityId === null) return null;
 
     return _entities[_environmentEntityId] as EnvironmentEntity;
+  }
+
+  // Getter of storage tank entity
+  get storageTankEntity(): StorageTankEntity | null {
+    const { _storageTankEntityId, _entities } = this;
+
+    if (_storageTankEntityId === null) return null;
+
+    return _entities[_storageTankEntityId] as StorageTankEntity;
+  }
+
+  // Getter of solar panel entity
+  get solarPanelEntity(): SolarPanelEntity | null {
+    const { _solarPanelEntityId, _entities } = this;
+
+    if (_solarPanelEntityId === null) return null;
+
+    return _entities[_solarPanelEntityId] as SolarPanelEntity;
   }
 
   /**
@@ -197,15 +207,22 @@ export class Simulator extends THREE.EventDispatcher<any> {
 
     const environmentEntity = new EnvironmentEntity(this);
     const storageTankEntity = new StorageTankEntity(this);
+    const solarPanelEntity = new SolarPanelEntity(this);
+
+    storageTankEntity.position.set(2, 0, 0);
+    solarPanelEntity.position.set(-2, 0, 0);
 
     this._environmentEntityId = environmentEntity.id;
-    this._storageEntityId = storageTankEntity.id;
+    this._storageTankEntityId = storageTankEntity.id;
+    this._solarPanelEntityId = solarPanelEntity.id;
 
     _entities[environmentEntity.id] = environmentEntity;
     _entities[storageTankEntity.id] = storageTankEntity;
+    _entities[solarPanelEntity.id] = solarPanelEntity;
 
     _scene.add(environmentEntity);
     _scene.add(storageTankEntity);
+    _scene.add(solarPanelEntity);
   }
 
   /**

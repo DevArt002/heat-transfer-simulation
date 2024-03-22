@@ -11,11 +11,17 @@ export const DUMMY_COLOR = new THREE.Color();
 // Default parameters
 export const DEFAULT_TANK_HEIGHT = 1;
 export const DEFAULT_TANK_RADIUS = 0.5;
+export const DEFAULT_SOLAR_PANEL_WIDTH = 1.5;
+export const DEFAULT_SOLAR_PANEL_HEIGHT = 2;
 
 // Default gui parameters
 export const DEFAULT_GUI_PARAMETERS: IGUIParams = {
   [EGUIFolderNames.STORAGE_TANK]: {
     height: DEFAULT_TANK_HEIGHT,
     radius: DEFAULT_TANK_RADIUS,
+  },
+  [EGUIFolderNames.SOLAR_PANEL]: {
+    width: DEFAULT_SOLAR_PANEL_WIDTH,
+    height: DEFAULT_SOLAR_PANEL_HEIGHT,
   },
 };

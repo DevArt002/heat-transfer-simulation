@@ -54,6 +54,27 @@ export class GUISystem extends System {
 
         storageTankEntity.radius = value;
       });
+
+    // Solar panel parameters
+    const solarPanelFolder = this._gui.addFolder(EGUIFolderNames.SOLAR_PANEL);
+    solarPanelFolder
+      .add(_guiParams[EGUIFolderNames.SOLAR_PANEL], 'width', 0.1, 10)
+      .onChange((value: number) => {
+        const { solarPanelEntity } = this._simulator;
+
+        if (solarPanelEntity === null) return;
+
+        solarPanelEntity.width = value;
+      });
+    solarPanelFolder
+      .add(_guiParams[EGUIFolderNames.SOLAR_PANEL], 'height', 0.1, 10)
+      .onChange((value: number) => {
+        const { solarPanelEntity } = this._simulator;
+
+        if (solarPanelEntity === null) return;
+
+        solarPanelEntity.height = value;
+      });
   }
 
   /**
