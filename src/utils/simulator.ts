@@ -160,3 +160,34 @@ export function formatSeconds(sec: number): string {
   // Return the result in "hh:mm:ss" format
   return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 }
+
+// Heatmap color by temperature value
+export function getHeatmapColor(temperature: number) {
+  // Ensure value is within the range of 0 to 100
+  temperature = Math.max(0, Math.min(100, temperature));
+
+  // Convert temperature to a position between 0 and 1 in the gradient
+  let normalizedValue = temperature / 100;
+
+  let red, green, blue;
+
+  if (normalizedValue <= 0.5) {
+    // Blue to green
+    red = 0;
+    green = Math.floor(255 * (2 * normalizedValue));
+    blue = Math.floor(255 * (1 - 2 * normalizedValue));
+  } else {
+    // Green to yellow to red
+    red = Math.floor(255 * (2 * normalizedValue - 1));
+    green = Math.floor(255 * (2 - 2 * normalizedValue));
+    blue = 0;
+  }
+
+  // Convert RGB values to hexadecimal format
+  let hexRed = red.toString(16).padStart(2, '0');
+  let hexGreen = green.toString(16).padStart(2, '0');
+  let hexBlue = blue.toString(16).padStart(2, '0');
+
+  // Concatenate and return the hexadecimal color
+  return '#' + hexRed + hexGreen + hexBlue;
+}

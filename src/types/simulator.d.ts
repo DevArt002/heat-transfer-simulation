@@ -12,6 +12,7 @@ export enum EGUIFolderNames {
   SOLAR_PANEL = 'Solar Panel',
   PIPE = 'Pipe',
   ENVIRONMENT = 'Environment',
+  OTHER = 'Other',
 }
 
 export interface ISimulatorDataUpdatedPayload {
@@ -46,5 +47,8 @@ export interface IGUIParams {
   [EGUIFolderNames.ENVIRONMENT]: {
     speed: number;
     ambientTemperature: number;
+  };
+  [EGUIFolderNames.OTHER]: {
+    heatmap: boolean;
   };
 }

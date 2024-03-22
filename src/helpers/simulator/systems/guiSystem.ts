@@ -185,6 +185,19 @@ export class GUISystem extends System {
 
         environmentEntity.ambientTemp = value;
       });
+
+    // Otger parameters
+    const otherFolder = this._gui.addFolder(EGUIFolderNames.OTHER);
+    otherFolder
+      .add(_guiParams[EGUIFolderNames.OTHER], 'heatmap')
+      .name('Show Heatmap')
+      .onChange((value: boolean) => {
+        const { storageTankEntity } = this._simulator;
+
+        if (storageTankEntity === null) return;
+
+        storageTankEntity.showHeatmap = value;
+      });
   }
 
   /**

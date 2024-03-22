@@ -11,13 +11,19 @@ import {
 
 import { Entity } from './entity';
 import { Simulator } from 'src/helpers';
+import { getHeatmapColor } from 'src/utils';
 
 export class StorageTankEntity extends Entity {
   private _mesh: THREE.Mesh = new THREE.Mesh();
-  private _material: THREE.Material = new THREE.MeshStandardMaterial({
+  private _material: THREE.MeshStandardMaterial = new THREE.MeshStandardMaterial({
     color: 0xffffff,
     roughness: 0.2,
     metalness: 1,
+    /**
+     * TODO Emissive color is used for temperature representation.
+     * But it's strongly recommended to make custom shader material rather than standard material
+     */
+    emissive: new THREE.Color(getHeatmapColor(DEFAULT_INITIAL_FLUID_TEMPERATURE)),
   });
   private _height: number = DEFAULT_TANK_HEIGHT;
   private _radius: number = DEFAULT_TANK_RADIUS;
@@ -25,6 +31,7 @@ export class StorageTankEntity extends Entity {
   private _fluidDensity: number = DEFAULT_FLUID_DENSITY;
   private _heatCapacityFluid: number = DEFAULT_SPECIFIC_HEAT_CAPACITY_FLUID;
   private _heatLossCoefficient: number = DEFAULT_TANK_HEAT_LOSS_COEFFICIENT;
+  private _showHeatmap: boolean = true;
 
   constructor(simulator: Simulator) {
     super(simulator);
@@ -94,6 +101,7 @@ export class StorageTankEntity extends Entity {
   // Setter of fluid temperature
   set fluidTemp(value: number) {
     this._fluidTemp = value;
+    this._material.emissive.set(getHeatmapColor(value));
   }
 
   // Getter of heat capacity per 1g of fluid
@@ -140,6 +148,17 @@ export class StorageTankEntity extends Entity {
     const { deltaEnvTemp, heatLossSurface } = this;
 
     return heatLossSurface * deltaEnvTemp;
+  }
+
+  // Getter of heatmap visible state
+  get showHeatmap(): boolean {
+    return this._showHeatmap;
+  }
+
+  // Setter of heatmap visible state
+  set showHeatmap(value: boolean) {
+    this._showHeatmap = value;
+    this._material.emissiveIntensity = value ? 1 : 0;
   }
 
   // Getter of point of the pipe inlet

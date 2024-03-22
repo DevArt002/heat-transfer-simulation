@@ -10,14 +10,14 @@ export const DUMMY_COLOR = new THREE.Color();
 
 // Default parameters
 export const SECONDS_PER_DAY = 24 * 60 * 60;
-export const EXPECTED_MAX_TEMPERATURE = 80;
+export const EXPECTED_MAX_TEMPERATURE = 90;
 export const EXPECTED_MIN_TEMPERATURE = 60;
 export const DEFAULT_TANK_HEIGHT = 1;
 export const DEFAULT_TANK_RADIUS = 0.5;
 export const DEFAULT_SOLAR_PANEL_WIDTH = 4;
 export const DEFAULT_SOLAR_PANEL_HEIGHT = 3;
 export const DEFAULT_LATITUDE = 40.7128; // Latitude of the location (e.g., New York City)
-export const DEFAULT_SPEED = 10000; // 2000s = 1s
+export const DEFAULT_SPEED = 2000; // 2000s = 1s
 export const DEFAULT_AMBIENT_TEMPERATURE = 20; // Celsius
 export const DEFAULT_INITIAL_FLUID_TEMPERATURE = 25; // Celsius
 export const DEFAULT_FLUID_DENSITY = 1000; // Kg per cubic meter, kg/m^3 e.g. Water's density
@@ -52,5 +52,8 @@ export const DEFAULT_GUI_PARAMETERS: IGUIParams = {
   [EGUIFolderNames.ENVIRONMENT]: {
     speed: DEFAULT_SPEED,
     ambientTemperature: DEFAULT_AMBIENT_TEMPERATURE,
+  },
+  [EGUIFolderNames.OTHER]: {
+    heatmap: true,
   },
 };
