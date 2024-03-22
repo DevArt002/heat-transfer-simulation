@@ -1,6 +1,5 @@
-import Stats from 'three/examples/jsm/libs/stats.module.js';
 import { Simulator } from 'src/helpers';
-
+import Stats from 'three/examples/jsm/libs/stats.module.js';
 import { System } from './system';
 
 export class StatsSystem extends System {
@@ -22,7 +21,7 @@ export class StatsSystem extends System {
   /**
    * Initialize
    */
-  init() {
+  init(): void {
     // Add class names to stats dom nodes, so that custom styles can be applied
     this._stats.dom.className = 'stats';
     this._rendererInfoContainer.className = 'rendererInfo';
@@ -36,7 +35,7 @@ export class StatsSystem extends System {
   /**
    * Update
    */
-  update() {
+  update(): void {
     // Update stats
     this._stats.update();
 
@@ -57,7 +56,7 @@ export class StatsSystem extends System {
   /**
    * Dispose
    */
-  dispose() {
+  dispose(): void {
     this._stats.end();
     this._statsContainer?.remove();
   }

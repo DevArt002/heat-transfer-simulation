@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+
 import { Simulator } from 'src/helpers';
 import { disposeObject } from 'src/utils';
 
@@ -12,7 +13,9 @@ export abstract class Entity extends THREE.Object3D {
     return this._simulator;
   }
 
-  // Initialize system
+  /**
+   * Initialize system
+   */
   abstract init(): void;
 
   /**
@@ -23,7 +26,7 @@ export abstract class Entity extends THREE.Object3D {
   /**
    * Dispose
    */
-  dispose() {
+  dispose(): void {
     disposeObject(this);
   }
 }

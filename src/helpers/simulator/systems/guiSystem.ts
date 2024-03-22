@@ -1,7 +1,6 @@
-import { Simulator } from 'src/helpers';
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { IGUIParams } from 'src/types';
-
+import { Simulator } from 'src/helpers';
 import { System } from './system';
 
 export class GUISystem extends System {
@@ -27,7 +26,7 @@ export class GUISystem extends System {
   /**
    * Initialize
    */
-  init() {
+  init(): void {
     // Append to simulator container
     this._simulator.container.appendChild(this._gui.domElement);
 
@@ -37,12 +36,14 @@ export class GUISystem extends System {
   /**
    * Update
    */
-  update() {}
+  update(): void {
+    return;
+  }
 
   /**
    * Dispose
    */
-  dispose() {
+  dispose(): void {
     this._gui.destroy();
   }
 }

@@ -1,10 +1,11 @@
 import * as THREE from 'three';
+
+import { GUISystem, StatsSystem } from './systems';
+
+import { Entity } from './entities';
 import { IS_DEV } from 'src/constants';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { TEntityID } from 'src/types';
-
-import { Entity } from './entities';
-import { GUISystem, StatsSystem } from './systems';
 
 export class Simulator extends THREE.EventDispatcher<any> {
   // Essential renderer parameters

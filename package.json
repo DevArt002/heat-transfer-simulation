@@ -1,5 +1,5 @@
 {
-  "name": "mesh_operation",
+  "name": "heat-transfer-simulation",
   "version": "0.0.0",
   "scripts": {
     "start": "vite",
