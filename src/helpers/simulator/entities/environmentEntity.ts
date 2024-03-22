@@ -37,7 +37,7 @@ export class EnvironmentEntity extends Entity {
   /**
    * Update
    */
-  update(delta?: number, elapsed?: number): void {
+  update(delta: number): void {
     if (delta === undefined) return;
 
     /**

@@ -21,7 +21,7 @@ export abstract class Entity extends THREE.Object3D {
   /**
    * Update
    */
-  abstract update(delta?: number, elapsed?: number): void;
+  abstract update(delta: number, elapsed: number): void;
 
   /**
    * Dispose

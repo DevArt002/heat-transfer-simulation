@@ -74,7 +74,7 @@ export class StorageTankEntity extends Entity {
   /**
    * Update
    */
-  update(delta?: number, elapsed?: number): void {
+  update(): void {
     // TODO Material update
     return;
   }

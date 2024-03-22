@@ -14,7 +14,7 @@ export abstract class System {
   /**
    * Update
    */
-  abstract update(delta?: number, elapsed?: number): void;
+  abstract update(delta: number, elapsed: number): void;
 
   /**
    * Dispose

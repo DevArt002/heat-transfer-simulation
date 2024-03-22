@@ -16,7 +16,7 @@ export class PipeEntity extends Entity {
   /**
    * Update
    */
-  update(delta?: number, elapsed?: number): void {
+  update(delta: number, elapsed: number): void {
     return;
   }
 }
