@@ -6,6 +6,7 @@ import { GUISystem, StatsSystem } from './systems';
 import { IS_DEV } from 'src/constants';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { TEntityID } from 'src/types';
+import { loadEnvMap } from 'src/utils';
 
 export class Simulator extends THREE.EventDispatcher<any> {
   // Essential renderer parameters
@@ -16,6 +17,7 @@ export class Simulator extends THREE.EventDispatcher<any> {
   private _height: number = 1; // Canvas height
   private _pixelRatio: number = window.devicePixelRatio; // Display ratio
   private _aspect: number = 1; // Camera aspect
+  private _envMap: THREE.Texture | null = null; // Env map
 
   // Systems&Helpers
   private _statsSystem: StatsSystem | null = null; // Stats
@@ -104,6 +106,11 @@ export class Simulator extends THREE.EventDispatcher<any> {
     return this._aspect;
   }
 
+  // Getter of envMap
+  get envMap(): THREE.Texture | null {
+    return this._envMap;
+  }
+
   // Getter of webgl renderer
   get renderer(): THREE.WebGLRenderer {
     return this._renderer;
@@ -159,12 +166,23 @@ export class Simulator extends THREE.EventDispatcher<any> {
   init() {
     this.onWindowResize = this.onWindowResize.bind(this);
 
+    // TODO Perhaps, add a loading screen while loading assets
+    this.loadAssets();
     this.initEntities();
     this.initSystems();
     this.initEventListeners();
 
     this._clock.start();
     this._renderer.setAnimationLoop(this.update);
+  }
+
+  /**
+   * Load assets
+   */
+  async loadAssets() {
+    const envMap = await loadEnvMap('img/env.hdr', this._renderer);
+    this._scene.environment = envMap;
+    this._envMap = envMap;
   }
 
   /**
