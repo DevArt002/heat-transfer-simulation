@@ -6,7 +6,7 @@ import { TEntityID } from 'src/types';
 import { Entity } from './entities';
 import { GUISystem, StatsSystem } from './systems';
 
-export class CAD extends THREE.EventDispatcher<any> {
+export class Simulator extends THREE.EventDispatcher<any> {
   // Essential renderer parameters
   private _renderer: THREE.WebGLRenderer; // Webgl renderer
   private _scene: THREE.Scene; // Scene

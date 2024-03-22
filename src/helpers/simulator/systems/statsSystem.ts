@@ -1,5 +1,5 @@
 import Stats from 'three/examples/jsm/libs/stats.module.js';
-import { CAD } from 'src/helpers';
+import { Simulator } from 'src/helpers';
 
 import { System } from './system';
 
@@ -8,8 +8,8 @@ export class StatsSystem extends System {
   private _statsContainer: HTMLDivElement = document.createElement('div');
   private _rendererInfoContainer: HTMLDivElement = document.createElement('div');
 
-  constructor(cad: CAD) {
-    super(cad);
+  constructor(simulator: Simulator) {
+    super(simulator);
 
     this.init();
   }
@@ -27,10 +27,10 @@ export class StatsSystem extends System {
     this._stats.dom.className = 'stats';
     this._rendererInfoContainer.className = 'rendererInfo';
     this._statsContainer.className = 'statsContainer';
-    // Append to cad container
+    // Append to simulator container
     this._statsContainer.appendChild(this._rendererInfoContainer);
     this._statsContainer.appendChild(this._stats.dom);
-    this._cad.container.appendChild(this._statsContainer);
+    this._simulator.container.appendChild(this._statsContainer);
   }
 
   /**
@@ -41,7 +41,7 @@ export class StatsSystem extends System {
     this._stats.update();
 
     // Update renderer info
-    const { memory, render, programs } = this._cad.renderer.info;
+    const { memory, render, programs } = this._simulator.renderer.info;
     this._rendererInfoContainer.innerHTML = `
       Frame number: ${render.frame} <br />
       Geometries: ${memory.geometries} <br />

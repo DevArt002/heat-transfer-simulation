@@ -1,1 +1,1 @@
-export * from './cad';
+export * from './simulator';

@@ -1,15 +1,15 @@
 import * as THREE from 'three';
-import { CAD } from 'src/helpers';
+import { Simulator } from 'src/helpers';
 import { disposeObject } from 'src/utils';
 
 export abstract class Entity extends THREE.Object3D {
-  constructor(protected readonly _cad: CAD) {
+  constructor(protected readonly _simulator: Simulator) {
     super();
   }
 
-  // Getter of CAD
-  get cad(): CAD {
-    return this._cad;
+  // Getter of simulator
+  get simulator(): Simulator {
+    return this._simulator;
   }
 
   // Initialize system

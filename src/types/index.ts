@@ -1,2 +1,2 @@
 export * from './common.d';
-export * from './cad.d';
+export * from './simulator';

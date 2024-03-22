@@ -1,4 +1,4 @@
-import { CAD } from 'src/helpers';
+import { Simulator } from 'src/helpers';
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { IGUIParams } from 'src/types';
 
@@ -8,8 +8,8 @@ export class GUISystem extends System {
   private _gui: GUI = new GUI();
   private _guiParams: IGUIParams = {};
 
-  constructor(cad: CAD) {
-    super(cad);
+  constructor(simulator: Simulator) {
+    super(simulator);
 
     this.init();
   }
@@ -28,8 +28,8 @@ export class GUISystem extends System {
    * Initialize
    */
   init() {
-    // Append to cad container
-    this._cad.container.appendChild(this._gui.domElement);
+    // Append to simulator container
+    this._simulator.container.appendChild(this._gui.domElement);
 
     // TODO Initialize gui folders and inputs here
   }

@@ -1,11 +1,11 @@
-import { CAD } from 'src/helpers';
+import { Simulator } from 'src/helpers';
 
 export abstract class System {
-  constructor(protected readonly _cad: CAD) {}
+  constructor(protected readonly _simulator: Simulator) {}
 
-  // Getter of CAD
-  get cad(): CAD {
-    return this._cad;
+  // Getter of simulator
+  get simulator(): Simulator {
+    return this._simulator;
   }
 
   // Initialize system

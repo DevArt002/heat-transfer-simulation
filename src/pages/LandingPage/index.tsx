@@ -1,8 +1,8 @@
 import React from 'react';
-import { useCAD } from 'src/hooks';
+import { useSimulator } from 'src/hooks';
 
 export const LandingPage = () => {
-  const { cadContainerRef } = useCAD();
+  const { simulatorContainerRef } = useSimulator();
 
-  return <div ref={cadContainerRef} className="h-full w-full"></div>;
+  return <div ref={simulatorContainerRef} className="h-full w-full"></div>;
 };
