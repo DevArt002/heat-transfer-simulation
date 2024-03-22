@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import { Entity, StorageTankEntity } from './entities';
+import { Entity, EnvironmentEntity, StorageTankEntity } from './entities';
 import { GUISystem, StatsSystem } from './systems';
 
 import { IS_DEV } from 'src/constants';
@@ -27,6 +27,7 @@ export class Simulator extends THREE.EventDispatcher<any> {
 
   // Entities
   private _entities: Record<TEntityID, Entity> = {}; // Entities
+  private _environmentEntityId: TEntityID | null = null; // Environment entity id
   private _storageEntityId: TEntityID | null = null; // Storage tank entity id
 
   // Other
@@ -60,12 +61,6 @@ export class Simulator extends THREE.EventDispatcher<any> {
     camera.position.set(10, 10, 10);
     camera.lookAt(new THREE.Vector3());
     scene.add(camera);
-
-    // Initialize lights
-    const directLight = new THREE.DirectionalLight(0xffffff, 0.5);
-    const ambientLight = new THREE.AmbientLight(0x404040);
-    scene.add(directLight);
-    scene.add(ambientLight);
 
     // Initialize grid helper
     const gridHelper = new THREE.GridHelper(10, 10, 0x00ff00);
@@ -160,6 +155,15 @@ export class Simulator extends THREE.EventDispatcher<any> {
     return _entities[_storageEntityId] as StorageTankEntity;
   }
 
+  // Getter of environment entity
+  get environmentEntity(): EnvironmentEntity | null {
+    const { _environmentEntityId, _entities } = this;
+
+    if (_environmentEntityId === null) return null;
+
+    return _entities[_environmentEntityId] as EnvironmentEntity;
+  }
+
   /**
    * Initialize
    */
@@ -191,11 +195,16 @@ export class Simulator extends THREE.EventDispatcher<any> {
   initEntities() {
     const { _entities, _scene } = this;
 
+    const environmentEntity = new EnvironmentEntity(this);
     const storageTankEntity = new StorageTankEntity(this);
 
+    this._environmentEntityId = environmentEntity.id;
     this._storageEntityId = storageTankEntity.id;
+
+    _entities[environmentEntity.id] = environmentEntity;
     _entities[storageTankEntity.id] = storageTankEntity;
 
+    _scene.add(environmentEntity);
     _scene.add(storageTankEntity);
   }
 

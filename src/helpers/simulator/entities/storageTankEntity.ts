@@ -49,22 +49,26 @@ export class StorageTankEntity extends Entity {
    * Initialize system
    */
   init(): void {
-    this._mesh.geometry = this._geometry;
-    this._mesh.material = this._material;
-    this._mesh.position.y = this._height / 2;
+    const { _mesh, _geometry, _material, _height } = this;
 
-    this.add(this._mesh);
+    _mesh.geometry = _geometry;
+    _mesh.material = _material;
+    _mesh.position.y = _height / 2;
+
+    this.add(_mesh);
   }
 
   /**
    * Update geometry
    */
   updateGeometry(): void {
+    const { _mesh, _radius, _height } = this;
+
     // TODO Instead of discarding outdated geometry and adding new geometry, it'd be advantageous to solely update geometry attributes.
     this._geometry.dispose();
-    this._geometry = new THREE.CylinderGeometry(this._radius, this._radius, this._height, 32);
-    this._mesh.geometry = this._geometry;
-    this._mesh.position.y = this._height / 2;
+    this._geometry = new THREE.CylinderGeometry(_radius, _radius, _height, 32);
+    _mesh.geometry = this._geometry;
+    _mesh.position.y = _height / 2;
   }
 
   /**
