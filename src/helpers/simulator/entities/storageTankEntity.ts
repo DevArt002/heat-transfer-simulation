@@ -9,6 +9,8 @@ export class StorageTankEntity extends Entity {
   private _mesh: THREE.Mesh = new THREE.Mesh();
   private _material: THREE.Material = new THREE.MeshStandardMaterial({
     color: 0xffffff,
+    roughness: 0.2,
+    metalness: 1,
   });
   private _height: number = DEFAULT_TANK_HEIGHT;
   private _radius: number = DEFAULT_TANK_RADIUS;

@@ -6,7 +6,11 @@ import { Simulator } from 'src/helpers';
 
 export class PipeEntity extends Entity {
   private _mesh: THREE.Mesh = new THREE.Mesh();
-  private _material: THREE.Material = new THREE.MeshStandardMaterial({ color: 0xffffff });
+  private _material: THREE.Material = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    roughness: 0.2,
+    metalness: 1,
+  });
   private _radius: number = DEFAULT_PIPE_RADIUS;
 
   constructor(simulator: Simulator) {
