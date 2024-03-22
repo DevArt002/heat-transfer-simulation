@@ -12,4 +12,25 @@
     margin: 0;
     box-sizing: border-box;
   }
+
+  .statsContainer {
+    position: absolute;
+    width: 150px;
+    bottom: 0px;
+    background: rgba(255, 255, 255, 0.4);
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    border-radius: 4px;
+    gap: 4px;
+  }
+
+  .rendererInfo {
+    font-size: 11px;
+    user-select: none;
+  }
+
+  .stats {
+    position: relative !important;
+  }
 }

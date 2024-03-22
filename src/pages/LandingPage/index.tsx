@@ -1,9 +1,8 @@
 import React from 'react';
+import { useCAD } from 'src/hooks';
 
 export const LandingPage = () => {
-  return (
-    <div className="h-full w-full">
-      <p>Landing page</p>
-    </div>
-  );
+  const { cadContainerRef } = useCAD();
+
+  return <div ref={cadContainerRef} className="h-full w-full"></div>;
 };

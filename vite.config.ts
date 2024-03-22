@@ -1,8 +1,8 @@
-import { defineConfig } from 'vitest/config';
 import glsl from 'vite-plugin-glsl';
-import { loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import { defineConfig } from 'vitest/config';
+import { loadEnv } from 'vite';
 
 // https://vitejs.dev/config/
 export default ({ mode }) => {
