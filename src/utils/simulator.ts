@@ -142,7 +142,7 @@ export function calculateSolarRadiation(seconds: number, latitude: number): numb
   // Calculate solar radiation on horizontal surface
   const solarRadiationHorizontal = clearSkyRadiation * Math.max(0, Math.sin(solarElevationAngle));
 
-  // Convert solar radiation to Watts per square meter
+  // Convert solar radiation to Joules per square meter
   return solarRadiationHorizontal;
 }
 

@@ -1,4 +1,5 @@
 import { ESimulatorEvents, ISimulatorDataUpdatedPayload } from 'src/types';
+import { EXPECTED_MAX_TEMPERATURE, EXPECTED_MIN_TEMPERATURE } from 'src/constants';
 import { calculateSolarRadiation, formatSeconds } from 'src/utils';
 
 import { Simulator } from 'src/helpers';
@@ -7,11 +8,17 @@ import { System } from './system';
 export class SimulationSystem extends System {
   private _totalEnergyProduced: number = 0;
   private _totalEnergyLost: number = 0;
+  private _isStarted: boolean = false;
 
   constructor(simulator: Simulator) {
     super(simulator);
 
     this.init();
+  }
+
+  // Getter of started status
+  get isStarted(): boolean {
+    return this._isStarted;
   }
 
   /**
@@ -33,8 +40,10 @@ export class SimulationSystem extends System {
       // Start pump
       pumpEntity.start();
 
+      this._isStarted = true;
+
       // Dispatch event
-      this.dispatchEvent(new CustomEvent(ESimulatorEvents.PUMP_RUNNING, { detail: true }));
+      this.dispatchEvent(new CustomEvent(ESimulatorEvents.STARTED));
 
       // Disable gui
       guiSystem.enable(false);
@@ -57,8 +66,10 @@ export class SimulationSystem extends System {
       // Stop pump
       pumpEntity.stop();
 
+      this._isStarted = false;
+
       // Dispatch event
-      this.dispatchEvent(new CustomEvent(ESimulatorEvents.PUMP_RUNNING, { detail: false }));
+      this.dispatchEvent(new CustomEvent(ESimulatorEvents.STOPPED));
 
       // Enable gui
       guiSystem.enable(true);
@@ -73,7 +84,7 @@ export class SimulationSystem extends System {
   /**
    * Calculate energy in
    */
-  _calculateEnergyIn(delta: number, elapsed: number): number {
+  private _calculateEnergyIn(delta: number, elapsed: number): number {
     const {
       _simulator: { solarPanelEntity, environmentEntity },
     } = this;
@@ -83,7 +94,7 @@ export class SimulationSystem extends System {
     // Calculate solar radiation by time and latitude
     const solarRadiation = calculateSolarRadiation(elapsed, environmentEntity.latitude);
     // Calculate energy gained by water from solar panel
-    const energyIn = solarPanelEntity.efficiencySurface * solarRadiation * delta;
+    const energyIn = solarPanelEntity.efficiencySurface * solarRadiation * (delta / 1000);
 
     return energyIn;
   }
@@ -91,7 +102,7 @@ export class SimulationSystem extends System {
   /**
    * Calculate energy out
    */
-  _calculateEnergyOut(delta: number): number {
+  private _calculateEnergyOut(delta: number): number {
     const {
       _simulator: { storageTankEntity, pipeEntity, pumpEntity, solarPanelEntity },
     } = this;
@@ -112,37 +123,90 @@ export class SimulationSystem extends System {
       energyOutRate += pipeEntity.energyOutRate + solarPanelEntity.energyOutRate;
     }
 
-    const energyOut = energyOutRate * delta;
+    const energyOut = energyOutRate * (delta / 1000);
 
     return energyOut;
   }
 
   /**
-   * Update temperature
+   * Control pump
    */
-  _updateTemp(delta: number, elapsed: number): void {
+  private _controlPump(deltaEnergy: number): void {
     const {
       _simulator: { storageTankEntity, pumpEntity },
+      _isStarted,
     } = this;
 
-    if (storageTankEntity === null || pumpEntity === null) return;
+    // If entites are not ready or simulation is not started, abort here
+    if (storageTankEntity === null || pumpEntity === null || !_isStarted) return;
+
+    let reason: string | null = null;
+
+    const { fluidTemp } = storageTankEntity;
+
+    // In case of simulation started, try to control pump running automatically
+    // If energy generation is negative or temperature is too high, stop pump
+    if (deltaEnergy <= 0 || fluidTemp >= EXPECTED_MAX_TEMPERATURE) {
+      if (pumpEntity.isRunning) {
+        pumpEntity.stop();
+        reason =
+          deltaEnergy <= 0
+            ? 'Stopped pump because energy generation is negative'
+            : 'Stopped pump because temperature is too high';
+      }
+    }
+
+    // If energy generation is positve and temperature is low, start pump
+    if (deltaEnergy > 0 && fluidTemp < EXPECTED_MIN_TEMPERATURE) {
+      if (!pumpEntity.isRunning) {
+        pumpEntity.start();
+        reason = 'Started pump because energy generation is positive and temperature is low';
+      }
+    }
+
+    if (reason) {
+      // TODO Dispatch event
+      console.warn(`${reason}: ${deltaEnergy}J, ${fluidTemp}°C`);
+    }
+  }
+
+  /**
+   * Update temperature
+   */
+  private _updateTemp(delta: number, elapsed: number): void {
+    const {
+      _simulator: { storageTankEntity, pumpEntity },
+      _isStarted,
+    } = this;
+
+    // If entites are not ready or simulation is not started, abort here
+    if (storageTankEntity === null || pumpEntity === null || !_isStarted) return;
 
     const { heatCapacityFluid, fluidMass } = storageTankEntity;
 
-    const energyIn = this._calculateEnergyIn(delta, elapsed);
+    let energyIn = this._calculateEnergyIn(delta, elapsed);
     const energyOut = this._calculateEnergyOut(delta);
+    const deltaEnergy = energyIn - energyOut;
 
-    // Perform temperate update only when pump is running
+    // Update total energy lost
+    this._totalEnergyLost += energyOut;
+
+    // If pump is running, involve positive energy for temperature calcuation
     if (pumpEntity.isRunning) {
-      // Update total energies
+      // Update total energe produced
       this._totalEnergyProduced += energyIn;
-      this._totalEnergyLost += energyOut;
-
-      // Calculate change in temperature
-      const deltaTemp = (energyIn - energyOut) / (fluidMass * heatCapacityFluid);
-
-      storageTankEntity.fluidTemp += deltaTemp;
     }
+    // Otherwise, ignore positive energy since physically fluid is not flowing
+    else {
+      energyIn = 0;
+    }
+
+    // Calculate change in temperature
+    const deltaTemp = (energyIn - energyOut) / (fluidMass * heatCapacityFluid);
+    storageTankEntity.fluidTemp += deltaTemp;
+
+    // Try turn on/off pump automatically
+    this._controlPump(deltaEnergy);
 
     // Dispatch event
     this.dispatchEvent(
@@ -150,16 +214,6 @@ export class SimulationSystem extends System {
         detail: { elapsed, temperature: storageTankEntity.fluidTemp },
       }),
     );
-
-    // // Log temperature and energies
-    // console.log(
-    //   `Hour ${formatSeconds(elapsed)}: Fluid temperature: ${storageTankEntity.fluidTemp.toFixed(
-    //     2,
-    //   )}°C`,
-    // );
-    // console.log(
-    //   `Energy produced: ${energyIn.toFixed(2)} J, Energy lost: ${energyOut.toFixed(2)} J`,
-    // );
   }
 
   /**

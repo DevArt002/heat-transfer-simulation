@@ -1,6 +1,8 @@
 export type TEntityID = number;
 
 export enum ESimulatorEvents {
+  STARTED = 'Started',
+  STOPPED = 'Stopped',
   PUMP_RUNNING = 'Pump Running',
   DATA_UPDATED = 'Date Updated',
 }

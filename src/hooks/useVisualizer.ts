@@ -41,11 +41,27 @@ export const useVisualizer = (
       ESimulatorEvents.DATA_UPDATED,
       visualizerInstance.onSimulationDataUpdated,
     );
+    simulationSystem.addEventListener(
+      ESimulatorEvents.STARTED,
+      visualizerInstance.onSimulationStarted,
+    );
+    simulationSystem.addEventListener(
+      ESimulatorEvents.STOPPED,
+      visualizerInstance.onSimulationStopped,
+    );
 
     return () => {
       simulationSystem.removeEventListener(
         ESimulatorEvents.DATA_UPDATED,
         visualizerInstance.onSimulationDataUpdated,
+      );
+      simulationSystem.removeEventListener(
+        ESimulatorEvents.STARTED,
+        visualizerInstance.onSimulationStarted,
+      );
+      simulationSystem.removeEventListener(
+        ESimulatorEvents.STOPPED,
+        visualizerInstance.onSimulationStopped,
       );
     };
   }, [simulatorInstance, visualizerInstance]);

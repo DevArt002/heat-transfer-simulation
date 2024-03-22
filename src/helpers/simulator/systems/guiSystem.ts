@@ -88,7 +88,7 @@ export class GUISystem extends System {
       });
     storageTankFolder
       .add(_guiParams[EGUIFolderNames.STORAGE_TANK], 'heatLossCoefficient', 0, 1)
-      .name('U (W/(m^2·°C))')
+      .name('U (J/(m^2·°C))')
       .onChange((value: number) => {
         const { storageTankEntity } = this._simulator;
 
@@ -131,7 +131,7 @@ export class GUISystem extends System {
       });
     solarPanelFolder
       .add(_guiParams[EGUIFolderNames.SOLAR_PANEL], 'heatLossCoefficient', 0, 1)
-      .name('U (W/(m^2·°C))')
+      .name('U (J/(m^2·°C))')
       .onChange((value: number) => {
         const { solarPanelEntity } = this._simulator;
 
@@ -154,7 +154,7 @@ export class GUISystem extends System {
       });
     pipeFolder
       .add(_guiParams[EGUIFolderNames.PIPE], 'heatLossCoefficient', 0, 1)
-      .name('U (W/(m^2·°C))')
+      .name('U (J/(m^2·°C))')
       .onChange((value: number) => {
         const { pipeEntity } = this._simulator;
 
