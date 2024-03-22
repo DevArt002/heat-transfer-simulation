@@ -179,10 +179,10 @@ export class Visualizer {
    */
   private _updateDimension(): void {
     const { _container, _xScale, _xDummyScale, _yScale, _svg, _xAxis, _yAxis } = this;
-    const { width } = _container.getBoundingClientRect();
+    const { width, height } = _container.getBoundingClientRect();
 
     const w = width;
-    const h = 150;
+    const h = height;
     const mt = 20;
     const mr = 20;
     const mb = 20;

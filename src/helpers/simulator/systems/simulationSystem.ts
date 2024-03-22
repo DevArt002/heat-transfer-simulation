@@ -1,4 +1,8 @@
-import { ESimulatorEvents, ISimulatorDataUpdatedPayload } from 'src/types';
+import {
+  ESimulatorEvents,
+  ISimulatorDataUpdatedPayload,
+  ISimulatorPumpLogPayload,
+} from 'src/types';
 import { EXPECTED_MAX_TEMPERATURE, EXPECTED_MIN_TEMPERATURE } from 'src/constants';
 import { calculateSolarRadiation, formatSeconds } from 'src/utils';
 
@@ -131,7 +135,7 @@ export class SimulationSystem extends System {
   /**
    * Control pump
    */
-  private _controlPump(deltaEnergy: number): void {
+  private _controlPump(deltaEnergy: number, elapsed: number): void {
     const {
       _simulator: { storageTankEntity, pumpEntity },
       _isStarted,
@@ -141,6 +145,7 @@ export class SimulationSystem extends System {
     if (storageTankEntity === null || pumpEntity === null || !_isStarted) return;
 
     let reason: string | null = null;
+    let status: 'on' | 'off' = 'off';
 
     const { fluidTemp } = storageTankEntity;
 
@@ -153,6 +158,7 @@ export class SimulationSystem extends System {
           deltaEnergy <= 0
             ? 'Stopped pump because energy generation is negative'
             : 'Stopped pump because temperature is too high';
+        status = 'off';
       }
     }
 
@@ -161,12 +167,23 @@ export class SimulationSystem extends System {
       if (!pumpEntity.isRunning) {
         pumpEntity.start();
         reason = 'Started pump because energy generation is positive and temperature is low';
+        status = 'on';
       }
     }
 
     if (reason) {
-      // TODO Dispatch event
-      console.warn(`${reason}: ${deltaEnergy}J, ${fluidTemp}°C`);
+      // Dispatch event
+      this.dispatchEvent(
+        new CustomEvent<ISimulatorPumpLogPayload>(ESimulatorEvents.PUMP_STATUS_UPDATED, {
+          detail: {
+            message: `${formatSeconds(elapsed)}: 
+              ${reason}: 
+              ${deltaEnergy.toFixed(2)}J, 
+              ${fluidTemp.toFixed(2)}°C`,
+            status,
+          },
+        }),
+      );
     }
   }
 
@@ -206,7 +223,7 @@ export class SimulationSystem extends System {
     storageTankEntity.fluidTemp += deltaTemp;
 
     // Try turn on/off pump automatically
-    this._controlPump(deltaEnergy);
+    this._controlPump(deltaEnergy, elapsed);
 
     // Dispatch event
     this.dispatchEvent(

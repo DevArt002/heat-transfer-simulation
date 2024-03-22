@@ -1,4 +1,5 @@
-import React, { FC, useCallback } from 'react';
+import { ESimulatorEvents, ISimulatorPumpLogPayload } from 'src/types';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 
 import type { Simulator } from 'src/helpers';
 import classNames from 'classnames';
@@ -13,6 +14,7 @@ export const ChartVisualizer: FC<IChartVisualizer> = ({ simulatorInstance }) => 
   const { visualizerContainerRef } = useVisualizer(simulatorInstance);
   const [started, { toggle: toggleStarted }] = useToggle(false);
   const [collapsed, { toggle: toggleCollapsed }] = useToggle(false);
+  const [logs, setLogs] = useState<ISimulatorPumpLogPayload[]>([]);
 
   // Handle start
   const handleStart = useCallback(() => {
@@ -25,6 +27,7 @@ export const ChartVisualizer: FC<IChartVisualizer> = ({ simulatorInstance }) => 
         simulatorInstance.stopSimulation();
       } else {
         simulatorInstance.startSimulation();
+        setLogs([]);
       }
     } catch (error) {
       console.error(error);
@@ -33,8 +36,28 @@ export const ChartVisualizer: FC<IChartVisualizer> = ({ simulatorInstance }) => 
     toggleStarted();
   }, [simulatorInstance, started, toggleStarted]);
 
+  // Listener when pump log is changed
+  const onLogRecieved = useCallback((e: Event) => {
+    setLogs((cur) => [...cur, (e as CustomEvent<ISimulatorPumpLogPayload>).detail]);
+  }, []);
+
+  // Add event listeners
+  useEffect(() => {
+    if (simulatorInstance === null) return;
+
+    const { simulationSystem } = simulatorInstance;
+
+    if (simulationSystem === null) return;
+
+    simulationSystem.addEventListener(ESimulatorEvents.PUMP_STATUS_UPDATED, onLogRecieved);
+
+    return () => {
+      simulationSystem.removeEventListener(ESimulatorEvents.PUMP_STATUS_UPDATED, onLogRecieved);
+    };
+  }, [simulatorInstance, onLogRecieved]);
+
   return (
-    <div className="absolute bottom-0 flex w-full flex-col gap-1 bg-gray-400 p-2">
+    <div className="absolute bottom-0 flex w-full flex-col gap-2 bg-gray-400 p-2">
       {/* Action buttons */}
       <div className="flex w-full justify-end gap-2 text-xs text-white">
         <button className="w-20 rounded bg-blue-400 p-1" onClick={handleStart}>
@@ -44,11 +67,24 @@ export const ChartVisualizer: FC<IChartVisualizer> = ({ simulatorInstance }) => 
           {collapsed ? 'Show' : 'Hide'}
         </button>
       </div>
-      {/* Chart container */}
-      <div
-        ref={visualizerContainerRef}
-        className={classNames('w-full flex-grow transition-all', collapsed ? 'h-0' : 'h-80')}
-      />
+      {/* Viz sections */}
+      <div className={classNames('flex-grow transition-all', collapsed ? 'h-0' : 'h-80')}>
+        {/* Chart container */}
+        <div ref={visualizerContainerRef} className="h-1/2 w-full" />
+        {/* Pump logs */}
+        <div className="flex h-1/2 w-full flex-col gap-1 overflow-y-scroll bg-white p-2">
+          {logs.map(({ message, status }, index) => (
+            <p
+              key={`pump-log-${index}`}
+              className={classNames(
+                'w-full',
+                status === 'on' ? 'text-blue-600' : 'text-yellow-600',
+              )}>
+              {message}
+            </p>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

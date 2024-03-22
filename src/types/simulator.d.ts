@@ -3,7 +3,7 @@ export type TEntityID = number;
 export enum ESimulatorEvents {
   STARTED = 'Started',
   STOPPED = 'Stopped',
-  PUMP_RUNNING = 'Pump Running',
+  PUMP_STATUS_UPDATED = 'Pump Status Updated',
   DATA_UPDATED = 'Date Updated',
 }
 
@@ -17,6 +17,11 @@ export enum EGUIFolderNames {
 export interface ISimulatorDataUpdatedPayload {
   elapsed: number;
   temperature: number;
+}
+
+export interface ISimulatorPumpLogPayload {
+  message: string;
+  status: 'on' | 'off';
 }
 
 export interface IGUIParams {
