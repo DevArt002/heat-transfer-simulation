@@ -4,6 +4,7 @@ import {
   Entity,
   EnvironmentEntity,
   PipeEntity,
+  PumpEntity,
   SolarPanelEntity,
   StorageTankEntity,
 } from './entities';
@@ -37,6 +38,7 @@ export class Simulator extends THREE.EventDispatcher<any> {
   private _storageTankEntityId: TEntityID | null = null; // Storage tank entity id
   private _solarPanelEntityId: TEntityID | null = null; // Solar panel entity id
   private _pipeEntityId: TEntityID | null = null; // Pipe line entity id
+  private _pumpEntityId: TEntityID | null = null; // Pump entity id
 
   // Other
   private _clock: THREE.Clock = new THREE.Clock(); // Clock
@@ -190,6 +192,15 @@ export class Simulator extends THREE.EventDispatcher<any> {
     return _entities[_pipeEntityId] as PipeEntity;
   }
 
+  // Getter of pump entity
+  get pumpEntity(): PumpEntity | null {
+    const { _pumpEntityId, _entities } = this;
+
+    if (_pumpEntityId === null) return null;
+
+    return _entities[_pumpEntityId] as PumpEntity;
+  }
+
   /**
    * Initialize
    */
@@ -221,23 +232,34 @@ export class Simulator extends THREE.EventDispatcher<any> {
   initEntities() {
     const { _entities, _scene } = this;
 
+    // Env entity
     const environmentEntity = new EnvironmentEntity(this);
     this._environmentEntityId = environmentEntity.id;
     _entities[environmentEntity.id] = environmentEntity;
     _scene.add(environmentEntity);
 
+    // Storage tank entity
     const storageTankEntity = new StorageTankEntity(this);
     storageTankEntity.position.set(2, 0, 0);
     this._storageTankEntityId = storageTankEntity.id;
     _entities[storageTankEntity.id] = storageTankEntity;
     _scene.add(storageTankEntity);
 
+    // Solar panel entity
     const solarPanelEntity = new SolarPanelEntity(this);
     solarPanelEntity.position.set(-2, 0, 0);
     this._solarPanelEntityId = solarPanelEntity.id;
     _entities[solarPanelEntity.id] = solarPanelEntity;
     _scene.add(solarPanelEntity);
 
+    // Pump entity
+    const pumpEntity = new PumpEntity(this);
+    pumpEntity.position.set(0, 0, 1);
+    this._pumpEntityId = pumpEntity.id;
+    _entities[pumpEntity.id] = pumpEntity;
+    _scene.add(pumpEntity);
+
+    // Pipe entity
     const pipeEntity = new PipeEntity(this);
     this._pipeEntityId = pipeEntity.id;
     _entities[pipeEntity.id] = pipeEntity;

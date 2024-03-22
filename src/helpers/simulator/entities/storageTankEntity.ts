@@ -67,9 +67,9 @@ export class StorageTankEntity extends Entity {
     const { _mesh, _material } = this;
 
     _mesh.material = _material;
+    _mesh.matrixAutoUpdate = false;
 
     this.add(_mesh);
-    _mesh.matrixAutoUpdate = false;
 
     // Set geometry
     this.setGeometry();

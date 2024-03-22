@@ -25,9 +25,9 @@ export class PipeEntity extends Entity {
   init(): void {
     const { _mesh, _material } = this;
     _mesh.material = _material;
+    _mesh.matrixAutoUpdate = false;
 
     this.add(_mesh);
-    _mesh.matrixAutoUpdate = false;
 
     // Set geometry
     this.setGeometry();
@@ -38,13 +38,15 @@ export class PipeEntity extends Entity {
    */
   setGeometry(): void {
     const { _simulator, _radius, _mesh } = this;
-    const { storageTankEntity, solarPanelEntity } = _simulator;
+    const { storageTankEntity, solarPanelEntity, pumpEntity } = _simulator;
 
-    if (storageTankEntity === null || solarPanelEntity === null) return;
+    if (storageTankEntity === null || solarPanelEntity === null || pumpEntity === null) return;
 
     // Define your position array which represents the path
     const points = [
       storageTankEntity.outPoint,
+      pumpEntity.inPoint,
+      pumpEntity.outPoint,
       solarPanelEntity.inPoint,
       solarPanelEntity.outPoint,
       storageTankEntity.inPoint,
