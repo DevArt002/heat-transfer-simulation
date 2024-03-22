@@ -1,7 +1,9 @@
 import { Simulator } from 'src/helpers';
 
-export abstract class System {
-  constructor(protected readonly _simulator: Simulator) {}
+export abstract class System extends EventTarget {
+  constructor(protected readonly _simulator: Simulator) {
+    super();
+  }
 
   // Getter of simulator
   get simulator(): Simulator {

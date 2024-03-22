@@ -15,7 +15,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { TEntityID } from 'src/types';
 import { loadEnvMap } from 'src/utils';
 
-export class Simulator extends THREE.EventDispatcher<any> {
+export class Simulator extends EventTarget {
   // Essential renderer parameters
   private _renderer: THREE.WebGLRenderer; // Webgl renderer
   private _scene: THREE.Scene; // Scene
@@ -251,21 +251,21 @@ export class Simulator extends THREE.EventDispatcher<any> {
 
     // Storage tank entity
     const storageTankEntity = new StorageTankEntity(this);
-    storageTankEntity.position.set(2, 0, 0);
+    storageTankEntity.position.set(4, 0, 0);
     this._storageTankEntityId = storageTankEntity.id;
     _entities[storageTankEntity.id] = storageTankEntity;
     _scene.add(storageTankEntity);
 
     // Solar panel entity
     const solarPanelEntity = new SolarPanelEntity(this);
-    solarPanelEntity.position.set(-2, 0, 0);
+    solarPanelEntity.position.set(-4, 0, 0);
     this._solarPanelEntityId = solarPanelEntity.id;
     _entities[solarPanelEntity.id] = solarPanelEntity;
     _scene.add(solarPanelEntity);
 
     // Pump entity
     const pumpEntity = new PumpEntity(this);
-    pumpEntity.position.set(0, 0, 1);
+    pumpEntity.position.set(4, 0, 2.5);
     this._pumpEntityId = pumpEntity.id;
     _entities[pumpEntity.id] = pumpEntity;
     _scene.add(pumpEntity);

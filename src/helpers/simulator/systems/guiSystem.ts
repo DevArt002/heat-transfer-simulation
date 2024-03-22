@@ -58,7 +58,7 @@ export class GUISystem extends System {
     // Solar panel parameters
     const solarPanelFolder = this._gui.addFolder(EGUIFolderNames.SOLAR_PANEL);
     solarPanelFolder
-      .add(_guiParams[EGUIFolderNames.SOLAR_PANEL], 'width', 1, 3)
+      .add(_guiParams[EGUIFolderNames.SOLAR_PANEL], 'width', 1, 10)
       .onChange((value: number) => {
         const { solarPanelEntity } = this._simulator;
 
@@ -67,7 +67,7 @@ export class GUISystem extends System {
         solarPanelEntity.width = value;
       });
     solarPanelFolder
-      .add(_guiParams[EGUIFolderNames.SOLAR_PANEL], 'height', 1, 3)
+      .add(_guiParams[EGUIFolderNames.SOLAR_PANEL], 'height', 1, 10)
       .onChange((value: number) => {
         const { solarPanelEntity } = this._simulator;
 

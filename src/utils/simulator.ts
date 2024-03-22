@@ -95,10 +95,29 @@ export async function loadEnvMap(
   return envMap.texture;
 }
 
+// Calculate total length of vector3 points
+export function calculateTotalLength(arr: THREE.Vector3[]): number {
+  let totalLength = 0;
+
+  // Iterate through each vector in the array
+  for (let i = 0; i < arr.length - 1; i++) {
+    const currentVector = arr[i];
+    const nextVector = arr[i + 1];
+
+    // Calculate the distance between currentVector and nextVector
+    const distance = currentVector.distanceTo(nextVector);
+
+    // Add the distance to the total length
+    totalLength += distance;
+  }
+
+  return totalLength;
+}
+
 // Function to calculate solar radiation based on time and location
-export function calculateSolarRadiation(milliseconds: number, latitude: number): number {
-  // Convert milliseconds to hours
-  const hour = milliseconds / (1000 * 60 * 60);
+export function calculateSolarRadiation(seconds: number, latitude: number): number {
+  // Convert seconds to hours
+  const hour = seconds / (60 * 60);
 
   // Calculate solar declination angle
   const declinationAngle = 23.45 * Math.sin((2 * Math.PI * (284 + hour)) / 365);
@@ -127,11 +146,11 @@ export function calculateSolarRadiation(milliseconds: number, latitude: number):
   return solarRadiationHorizontal;
 }
 
-// Format milliseconds
-export function formatMS(milliseconds: number): string {
-  const hours = Math.floor(milliseconds / (1000 * 60 * 60));
-  const minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((milliseconds % (1000 * 60)) / 1000); // Calculate remaining seconds
+// Format seconds
+export function formatSeconds(sec: number): string {
+  const hours = Math.floor(sec / (60 * 60));
+  const minutes = Math.floor((sec % (60 * 60)) / 60);
+  const seconds = Math.floor(sec % 60); // Calculate remaining seconds
 
   // Format the result
   const formattedHours = hours < 10 ? '0' + hours : hours; // Add leading zero if hours is less than 10

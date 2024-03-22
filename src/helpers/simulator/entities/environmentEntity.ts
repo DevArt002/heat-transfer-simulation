@@ -5,6 +5,7 @@ import {
   DEFAULT_LATITUDE,
   DEFAULT_SPEED,
   IS_DEV,
+  SECONDS_PER_DAY,
 } from 'src/constants';
 
 import { Entity } from './entity';
@@ -15,9 +16,9 @@ export class EnvironmentEntity extends Entity {
   private _dirLight: THREE.DirectionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
   private _ambLight: THREE.AmbientLight = new THREE.AmbientLight(0x404040);
   private _latitude: number = DEFAULT_LATITUDE; // Latitude of location
-  private _ambientTemperature: number = DEFAULT_AMBIENT_TEMPERATURE; // Ambient temperature in Celsius
+  private _ambientTemp: number = DEFAULT_AMBIENT_TEMPERATURE; // Ambient temperature in Celsius
   private _speed: number = DEFAULT_SPEED; // 2000s = 1ms
-  private _sunRotSpeed: number = ((Math.PI * 2) / (24 * 60 * 60 * 1000)) * DEFAULT_SPEED; // (360 deg) / (miliseconds of day) * (default spped)
+  private _sunRotSpeed: number = ((Math.PI * 2) / SECONDS_PER_DAY) * DEFAULT_SPEED; // (360 deg) / (seconds of day) * (default spped)
 
   constructor(simulator: Simulator) {
     super(simulator);
@@ -33,7 +34,7 @@ export class EnvironmentEntity extends Entity {
   // Setter of speed
   set speed(value: number) {
     this._speed = value;
-    this._sunRotSpeed = ((Math.PI * 2) / (24 * 60 * 60 * 1000)) * value;
+    this._sunRotSpeed = ((Math.PI * 2) / SECONDS_PER_DAY) * value;
   }
 
   // Getter of sun rotation speed
@@ -47,8 +48,8 @@ export class EnvironmentEntity extends Entity {
   }
 
   // Getter of ambient temperature
-  get ambientTemperature(): number {
-    return this._ambientTemperature;
+  get ambientTemp(): number {
+    return this._ambientTemp;
   }
 
   /**
@@ -57,7 +58,7 @@ export class EnvironmentEntity extends Entity {
   init(): void {
     const { _dirLightContainer, _dirLight, _ambLight } = this;
 
-    _dirLight.position.set(0, -6, 0);
+    _dirLight.position.set(0, -10, 0);
 
     _dirLightContainer.add(_dirLight);
     this.add(_dirLightContainer);
@@ -74,8 +75,6 @@ export class EnvironmentEntity extends Entity {
    * Update
    */
   update(delta: number): void {
-    if (delta === undefined) return;
-
     const { _dirLightContainer, _sunRotSpeed } = this;
 
     /**

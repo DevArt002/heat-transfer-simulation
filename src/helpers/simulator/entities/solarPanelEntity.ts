@@ -68,9 +68,36 @@ export class SolarPanelEntity extends Entity {
     return this._efficiency;
   }
 
+  // Getter of efficiency on surface
+  get efficiencySurface(): number {
+    const { _efficiency, area } = this;
+
+    return _efficiency * area;
+  }
+
   // Getter of heat loss coefficient
-  get heatLoosCoefficient(): number {
+  get heatLossCoefficient(): number {
     return this._heatLossCoefficient;
+  }
+
+  // Getter of heat loss on surface
+  get heatLossSurface(): number {
+    const { _heatLossCoefficient, area } = this;
+
+    return _heatLossCoefficient * area;
+  }
+
+  // Getter of energy lossing per second
+  get energyOutRate(): number {
+    const {
+      _simulator: { storageTankEntity },
+      heatLossSurface,
+    } = this;
+
+    if (storageTankEntity === null) return 0;
+
+    // TODO Caculating energy out from attr of storage tank is wrong.
+    return heatLossSurface * storageTankEntity.deltaEnvTemp;
   }
 
   // Getter of point of the pipe inlet

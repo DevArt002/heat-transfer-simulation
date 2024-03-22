@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 
+import { DEFAULT_PUMP_FLOW_RATE } from 'src/constants';
 import { Entity } from './entity';
 import { Simulator } from 'src/helpers';
 import { TXY } from 'src/types';
@@ -10,9 +11,10 @@ export class PumpEntity extends Entity {
     emissive: 0xff0000,
     emissiveIntensity: 0.2,
   });
+  private _flowRate: number = DEFAULT_PUMP_FLOW_RATE; // TODO This attr is not being used anywhere. Need to apply this somewhere proper
   private _upTimes: TXY[] = [];
   private _startedTime: number | null = null;
-  private _isStarted: boolean = false;
+  private _isRunning: boolean = false;
 
   constructor(simulator: Simulator) {
     super(simulator);
@@ -20,9 +22,14 @@ export class PumpEntity extends Entity {
     this.init();
   }
 
-  // Getter of flag of started status
-  get isStarted(): boolean {
-    return this._isStarted;
+  // Getter of flow rate
+  get flowRate(): number {
+    return this._flowRate;
+  }
+
+  // Getter of flag of running status
+  get isRunning(): boolean {
+    return this._isRunning;
   }
 
   // Getter of started time
@@ -71,7 +78,7 @@ export class PumpEntity extends Entity {
   start() {
     this._material.emissive.set(0x00ff00);
     this._startedTime = this._simulator.clock.getElapsedTime();
-    this._isStarted = true;
+    this._isRunning = true;
   }
 
   /**
@@ -85,17 +92,17 @@ export class PumpEntity extends Entity {
       this._startedTime = null;
     }
     this._material.emissive.set(0xff0000);
-    this._isStarted = false;
+    this._isRunning = false;
   }
 
   /**
    * Update
    */
   update(delta: number, elapsed: number): void {
-    const { _isStarted, _mesh } = this;
+    const { _isRunning, _mesh } = this;
 
     // Showing running status as pulse animation
-    if (!_isStarted) return;
+    if (!_isRunning) return;
 
     const scaleFactor = 1 + Math.sin(elapsed * 80) * 0.05;
     _mesh.scale.set(scaleFactor, scaleFactor, scaleFactor);

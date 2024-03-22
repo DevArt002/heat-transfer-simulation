@@ -21,9 +21,9 @@ export class StorageTankEntity extends Entity {
   });
   private _height: number = DEFAULT_TANK_HEIGHT;
   private _radius: number = DEFAULT_TANK_RADIUS;
-  private _initialFluidTemperature: number = DEFAULT_INITIAL_FLUID_TEMPERATURE;
+  private _fluidTemp: number = DEFAULT_INITIAL_FLUID_TEMPERATURE;
   private _fluidDensity: number = DEFAULT_FLUID_DENSITY;
-  private _specificHeatCapacityFluid: number = DEFAULT_SPECIFIC_HEAT_CAPACITY_FLUID;
+  private _heatCapacityFluid: number = DEFAULT_SPECIFIC_HEAT_CAPACITY_FLUID;
   private _heatLossCoefficient: number = DEFAULT_TANK_HEAT_LOSS_COEFFICIENT;
 
   constructor(simulator: Simulator) {
@@ -73,26 +73,58 @@ export class StorageTankEntity extends Entity {
     return this._fluidDensity;
   }
 
-  // Getter of mass of fluid
-  get massFluid(): number {
+  // Getter of mass of fluid in gram
+  get fluidMass(): number {
     const { volume, _fluidDensity } = this;
 
     return volume * _fluidDensity;
   }
 
-  // Getter of initial fluid temperature
-  get initialFluidTemperature(): number {
-    return this._initialFluidTemperature;
+  // TODO Perhaps, would need top and bottom temperatures instead of average temperature
+  // Getter of fluid temperature
+  get fluidTemp(): number {
+    return this._fluidTemp;
   }
 
-  // Getter of specific heat capacity fluid
-  get specificHeatCapacityFluid(): number {
-    return this._specificHeatCapacityFluid;
+  // Setter of fluid temperature
+  set fluidTemp(value: number) {
+    this._fluidTemp = value;
+  }
+
+  // Getter of heat capacity per 1g of fluid
+  get heatCapacityFluid(): number {
+    return this._heatCapacityFluid;
   }
 
   // Getter of heat loss coefficient
-  get heatLoosCoefficient(): number {
+  get heatLossCoefficient(): number {
     return this._heatLossCoefficient;
+  }
+
+  // Getter of heat loss on surface
+  get heatLossSurface(): number {
+    const { _heatLossCoefficient, area } = this;
+
+    return _heatLossCoefficient * area;
+  }
+
+  // Getter of delta temperature between fluid temperature and ambient temperature
+  get deltaEnvTemp(): number {
+    const {
+      _fluidTemp,
+      _simulator: { environmentEntity },
+    } = this;
+
+    if (environmentEntity === null) return 0;
+
+    return _fluidTemp - environmentEntity.ambientTemp;
+  }
+
+  // Getter of energy lossing per second
+  get energyOutRate(): number {
+    const { deltaEnvTemp, heatLossSurface } = this;
+
+    return heatLossSurface * deltaEnvTemp;
   }
 
   // Getter of point of the pipe inlet
