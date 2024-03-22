@@ -24,10 +24,10 @@ export class SimulationSystem extends System {
    */
   start(): void {
     try {
-      const { pumpEntity } = this._simulator;
+      const { pumpEntity, guiSystem } = this._simulator;
 
-      if (pumpEntity === null) {
-        throw new Error('Pump entity is not initialized');
+      if (pumpEntity === null || guiSystem === null) {
+        throw new Error('Not ready for simulation');
       }
 
       // Start pump
@@ -35,6 +35,9 @@ export class SimulationSystem extends System {
 
       // Dispatch event
       this.dispatchEvent(new CustomEvent(ESimulatorEvents.PUMP_RUNNING, { detail: true }));
+
+      // Disable gui
+      guiSystem.enable(false);
     } catch (error) {
       console.error(error);
     }
@@ -45,10 +48,10 @@ export class SimulationSystem extends System {
    */
   stop(): void {
     try {
-      const { pumpEntity } = this._simulator;
+      const { pumpEntity, guiSystem } = this._simulator;
 
-      if (pumpEntity === null) {
-        throw new Error('Pump entity is not initialized');
+      if (pumpEntity === null || guiSystem === null) {
+        throw new Error('Not ready for simulation');
       }
 
       // Stop pump
@@ -56,6 +59,9 @@ export class SimulationSystem extends System {
 
       // Dispatch event
       this.dispatchEvent(new CustomEvent(ESimulatorEvents.PUMP_RUNNING, { detail: false }));
+
+      // Enable gui
+      guiSystem.enable(false);
 
       this._totalEnergyProduced = 0;
       this._totalEnergyLost = 0;

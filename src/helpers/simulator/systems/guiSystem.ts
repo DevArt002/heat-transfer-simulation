@@ -188,6 +188,18 @@ export class GUISystem extends System {
   }
 
   /**
+   * Enable/Disable GUI inputs
+   */
+  enable(enabled: boolean): void {
+    if (enabled) {
+      this._gui.show();
+    } else {
+      this.gui.close();
+      // TODO Disable user interaction on inputs
+    }
+  }
+
+  /**
    * Update
    */
   update(): void {
