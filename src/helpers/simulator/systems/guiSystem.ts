@@ -1,11 +1,13 @@
+import { EGUIFolderNames, IGUIParams } from 'src/types';
+
+import { DEFAULT_GUI_PARAMETERS } from 'src/constants';
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
-import { IGUIParams } from 'src/types';
 import { Simulator } from 'src/helpers';
 import { System } from './system';
 
 export class GUISystem extends System {
   private _gui: GUI = new GUI();
-  private _guiParams: IGUIParams = {};
+  private _guiParams: IGUIParams = DEFAULT_GUI_PARAMETERS;
 
   constructor(simulator: Simulator) {
     super(simulator);
@@ -27,10 +29,31 @@ export class GUISystem extends System {
    * Initialize
    */
   init(): void {
+    const { _guiParams } = this;
+
     // Append to simulator container
     this._simulator.container.appendChild(this._gui.domElement);
 
-    // TODO Initialize gui folders and inputs here
+    // Storage tank parameters
+    const storageTankFolder = this._gui.addFolder(EGUIFolderNames.STORAGE_TANK);
+    storageTankFolder
+      .add(_guiParams[EGUIFolderNames.STORAGE_TANK], 'height', 0.1, 10)
+      .onChange((value: number) => {
+        const { storageTankEntity } = this._simulator;
+
+        if (storageTankEntity === null) return;
+
+        storageTankEntity.height = value;
+      });
+    storageTankFolder
+      .add(_guiParams[EGUIFolderNames.STORAGE_TANK], 'radius', 0.1, 10)
+      .onChange((value: number) => {
+        const { storageTankEntity } = this._simulator;
+
+        if (storageTankEntity === null) return;
+
+        storageTankEntity.radius = value;
+      });
   }
 
   /**

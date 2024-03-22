@@ -1,5 +1,12 @@
 export type TEntityID = number;
 
+export enum EGUIFolderNames {
+  STORAGE_TANK = 'Storage Tank',
+}
+
 export interface IGUIParams {
-  // TODO Add parameters of GUI here
+  [EGUIFolderNames.STORAGE_TANK]: {
+    height: number;
+    radius: number;
+  };
 }

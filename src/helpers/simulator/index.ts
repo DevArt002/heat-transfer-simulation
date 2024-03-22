@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 
+import { Entity, StorageTankEntity } from './entities';
 import { GUISystem, StatsSystem } from './systems';
 
-import { Entity } from './entities';
 import { IS_DEV } from 'src/constants';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { TEntityID } from 'src/types';
@@ -25,6 +25,7 @@ export class Simulator extends THREE.EventDispatcher<any> {
 
   // Entities
   private _entities: Record<TEntityID, Entity> = {}; // Entities
+  private _storageEntityId: TEntityID | null = null; // Storage tank entity id
 
   // Other
   private _clock: THREE.Clock = new THREE.Clock(); // Clock
@@ -143,17 +144,41 @@ export class Simulator extends THREE.EventDispatcher<any> {
     return this._guiSystem;
   }
 
+  // Getter of storage tank entity
+  get storageTankEntity(): StorageTankEntity | null {
+    const { _storageEntityId, _entities } = this;
+
+    if (_storageEntityId === null) return null;
+
+    return _entities[_storageEntityId] as StorageTankEntity;
+  }
+
   /**
    * Initialize
    */
   init() {
     this.onWindowResize = this.onWindowResize.bind(this);
 
+    this.initEntities();
     this.initSystems();
     this.initEventListeners();
 
     this._clock.start();
     this._renderer.setAnimationLoop(this.update);
+  }
+
+  /**
+   * Initialize entities
+   */
+  initEntities() {
+    const { _entities, _scene } = this;
+
+    const storageTankEntity = new StorageTankEntity(this);
+
+    this._storageEntityId = storageTankEntity.id;
+    _entities[storageTankEntity.id] = storageTankEntity;
+
+    _scene.add(storageTankEntity);
   }
 
   /**
