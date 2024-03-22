@@ -149,8 +149,7 @@ export class Simulator extends THREE.EventDispatcher<any> {
   init() {
     this.onWindowResize = this.onWindowResize.bind(this);
 
-    this.initStatsSystem();
-    this.initGUISystem();
+    this.initSystems();
     this.initEventListeners();
 
     this._clock.start();
@@ -158,21 +157,13 @@ export class Simulator extends THREE.EventDispatcher<any> {
   }
 
   /**
-   * Initialize stats system
+   * Initialize systems
    */
-  initStatsSystem() {
-    if (!IS_DEV) return;
-
-    this._statsSystem = new StatsSystem(this);
-  }
-
-  /**
-   * Initialize gui system
-   */
-  initGUISystem() {
-    if (!IS_DEV) return;
-
-    this._guiSystem = new GUISystem(this);
+  initSystems() {
+    if (IS_DEV) {
+      this._statsSystem = new StatsSystem(this);
+      this._guiSystem = new GUISystem(this);
+    }
   }
 
   /**
@@ -206,7 +197,12 @@ export class Simulator extends THREE.EventDispatcher<any> {
    * Tick
    */
   update = () => {
-    const { _clock, _statsSystem, _guiSystem, _orbitControls, _entities } = this;
+    const { _clock, _statsSystem, _guiSystem, _orbitControls, _entities, _isDisposed } = this;
+
+    if (_isDisposed) {
+      this._renderer.setAnimationLoop(null);
+      return;
+    }
 
     const delta = _clock.getDelta();
     const elapsed = _clock.getElapsedTime();
